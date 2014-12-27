@@ -1,0 +1,24 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aramani", "Aramani\Aramani.csproj", "{09CEAA98-D7CC-4D4E-B177-7BD08F4693CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mono.Cecil", "cecil\Mono.Cecil.csproj", "{D68133BD-1E63-496E-9EDE-4FBDBF77B486}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{09CEAA98-D7CC-4D4E-B177-7BD08F4693CC}.Debug|x86.ActiveCfg = Debug|x86
+		{09CEAA98-D7CC-4D4E-B177-7BD08F4693CC}.Debug|x86.Build.0 = Debug|x86
+		{09CEAA98-D7CC-4D4E-B177-7BD08F4693CC}.Release|x86.ActiveCfg = Release|x86
+		{09CEAA98-D7CC-4D4E-B177-7BD08F4693CC}.Release|x86.Build.0 = Release|x86
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D68133BD-1E63-496E-9EDE-4FBDBF77B486}.Release|x86.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Aramani\Aramani.csproj
+	EndGlobalSection
+EndGlobal
