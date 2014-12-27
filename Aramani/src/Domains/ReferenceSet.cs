@@ -10,6 +10,8 @@ using CODE = Mono.Cecil.Cil.Code;
 namespace DotNetAnalyser.Domains
 {
 
+#if DONE
+
     abstract class ReferenceSet<T> : IDomainElement<ReferenceSet<T>>
         where T : MemberReference
     {
@@ -20,7 +22,6 @@ namespace DotNetAnalyser.Domains
         public bool IsTop
         {
             get { return isTop; }
-            set { this.Clear(); isTop = true; }
         }
 
         /// <summary>
@@ -28,8 +29,7 @@ namespace DotNetAnalyser.Domains
         /// </summary>
         public bool IsBottom
         {
-            get { return !this.Any() && !IsTop; }
-            set { this.Clear(); isTop = false; }
+            get { return !IsTop; }
         }
 
         #endregion
@@ -49,4 +49,5 @@ namespace DotNetAnalyser.Domains
 
         #endregion
     }
+#endif
 }

@@ -11,6 +11,5 @@ namespace DotNetAnalyser.Analyser
     interface ICodeVisitor<T>
     {
 
-
     }
 }
