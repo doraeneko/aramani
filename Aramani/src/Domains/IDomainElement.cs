@@ -11,9 +11,9 @@ namespace DotNetAnalyser.Domains
 
         #region /* Properties */
 
-        bool IsTop { get; set; }
+        bool IsTop { get; }
 
-        bool IsBottom { get; set; }
+        bool IsBottom { get; }
 
         #endregion
 

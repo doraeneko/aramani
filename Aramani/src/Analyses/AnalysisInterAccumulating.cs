@@ -9,16 +9,18 @@ using DotNetAnalyser.Domains;
 namespace DotNetAnalyser.Analyser
 {
 
-    class AnalysisIntraAccumulating<U>
+    class AnalysisInterAccumulating<U>
         where U : IDomainElement<U>
     {
 
         public U Perform
-            (MethodDefinition methodDefinition,
+            (MethodDefinition initialMethodDefinition,
              U startValue,
              IEffectComputer<U> transformer)
         {
-            foreach (var instr in methodDefinition.Body.Instructions)
+            var value = (U)startValue.Clone();
+
+            foreach (var instr in initialMethodDefinition.Body.Instructions)
             {
                 startValue.UnionWith(transformer.ComputeEffect(instr, startValue));
             }
