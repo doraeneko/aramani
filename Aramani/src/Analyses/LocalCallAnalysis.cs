@@ -11,27 +11,25 @@ using DotNetAnalyser.Domains;
 
 namespace DotNetAnalyser.Analyser
 {
-    class LocalCallAnalysis : IEffectComputer<ReferenceSet<MethodReference>>
+    class LocalCallAnalysis : IEffectComputer<ReferenceSet<MethodDefinition>>
     {
 
-        void AddOperandIfMethodReference(ReferenceSet<MethodReference> domainElement, object operand)
+        void AddOperandIfMethodReference(ReferenceSet<MethodDefinition> domainElement, object operand)
         {
             var operandAsMethodReference = operand as MethodReference;
             if (operandAsMethodReference != null)
             {
                 // operandAsMethodReference = operandAsMethodReference.Resolve();
-                var elementMethod = operandAsMethodReference.GetElementMethod();
-                if (elementMethod != null)
-                    domainElement.Add(elementMethod);
-                else
-                    domainElement.Add(operandAsMethodReference);
+                var resolvedMethod = operandAsMethodReference.Resolve();
+                if (resolvedMethod != null)
+                    domainElement.Add(resolvedMethod);
+
             }
         }
 
-        public ReferenceSet<MethodReference> ComputeEffect(Mono.Cecil.Cil.Instruction instr, ReferenceSet<MethodReference> input)
+        public ReferenceSet<MethodDefinition> ComputeEffect(Mono.Cecil.Cil.Instruction instr, ReferenceSet<MethodDefinition> input)
         {
             var opCode = instr.OpCode;
-
             switch (opCode.Code)
             {
                 case CODE.Call:

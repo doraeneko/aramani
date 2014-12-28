@@ -69,6 +69,14 @@ namespace DotNetAnalyser.Domains
         
         #region /* Methods */
 
+        public IEnumerable<T> GetEntries()
+        {
+            foreach (var entry in theSet)
+            {
+                yield return entry;
+            }
+        }
+
         public void Add(T reference)
         {
             theSet.Add(reference);
@@ -81,7 +89,7 @@ namespace DotNetAnalyser.Domains
 
         public void UnionWith(ReferenceSet<T> element)
         {
-            if (element.IsTop)
+            if (element.IsTop || isTop)
                 isTop = true;
             else
                 theSet.UnionWith(element.theSet);
@@ -91,6 +99,12 @@ namespace DotNetAnalyser.Domains
         {
             if (element.IsTop)
                 return;
+            else if (isTop)
+            {
+                isTop = false;
+                theSet = new HashSet<T>();
+                theSet.UnionWith(element.theSet);
+            }
             else
                 theSet.IntersectWith(element.theSet);
         }
@@ -110,7 +124,6 @@ namespace DotNetAnalyser.Domains
             {
                 isTop = true;
             }
-
         }
 
         public void WidenWith(ReferenceSet<T> element)
@@ -136,13 +149,23 @@ namespace DotNetAnalyser.Domains
             return result;
         }
 
+        public int Cardinality
+        {
+            get 
+            { 
+                if (isTop) return -1;
+                if (IsBottom) return 0;
+                return theSet.Count();
+            }
+
+        }
         public override string ToString()
         {
             var result = "";
             if (isTop)
-                result += "<TOP>";
+                result += "<TOP>\n";
             else if (IsBottom)
-                result += "<BOTTOM>";
+                result += "<BOTTOM>\n";
             else
             {
                 result += "{\n";

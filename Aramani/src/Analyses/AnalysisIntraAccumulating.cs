@@ -18,9 +18,13 @@ namespace DotNetAnalyser.Analyser
              U startValue,
              IEffectComputer<U> transformer)
         {
-            foreach (var instr in methodDefinition.Body.Instructions)
+            // Console.WriteLine("CHECKING: " + methodDefinition + ", with: " + transformer);
+            if (methodDefinition.Body != null)
             {
-                startValue.UnionWith(transformer.ComputeEffect(instr, startValue));
+                foreach (var instr in methodDefinition.Body.Instructions)
+                {
+                    startValue.UnionWith(transformer.ComputeEffect(instr, startValue));
+                }
             }
             return startValue;
         }
