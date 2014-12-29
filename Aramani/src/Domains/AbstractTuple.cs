@@ -127,7 +127,7 @@ namespace DotNetAnalyser.Domains
             }
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             var result = new AbstractTuple<C>(theTuple.Length);
             for (int i = 0; i < theTuple.Length; i++)
@@ -140,17 +140,17 @@ namespace DotNetAnalyser.Domains
 
         public override string ToString()
         {
-            if (IsBottom)
+            /*if (IsBottom)
                 return "<BOTTOM>";
             else if (IsTop)
                 return "<TOP>";
-
-            var result = "TUPLE \n";
+            */
+            var result = "(\n";
             for (int i = 0; i < theTuple.Length; i++)
             {
                 result += "[" + i + "] = " + theTuple[i].ToString() + "\n";
             }
-
+            result += ")\n";
             return result;
         }
 

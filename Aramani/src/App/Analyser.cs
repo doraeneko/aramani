@@ -14,7 +14,7 @@ namespace DotNetAnalyser.App
         {
             var inputFile = "Aramani.exe";
             var methodName = "Main";
-            var typeName = "DotNetAnalyser.Analyser.Driver.Analyser";
+            var typeName = "DotNetAnalyser.App.Analyser";
             var resolver = new DefaultAssemblyResolver();
             resolver.AddSearchDirectory(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
             var myLibrary 
@@ -28,7 +28,7 @@ namespace DotNetAnalyser.App
             method.Resolve();
 
             Console.WriteLine("Performing a few simple analyses.");
-
+#if BLUBB
             // Type analysis
             Console.WriteLine("Performing type analysis.");
             AnalysisIntraAccumulating<Domains.TypeSet> typeAnalysis = new AnalysisIntraAccumulating<Domains.TypeSet>();
@@ -51,6 +51,35 @@ namespace DotNetAnalyser.App
             var transitiveCallResult = transitiveCallAnalysis.Perform();
             Console.WriteLine("Final result: \n" + transitiveCallResult.ToString());
             Console.WriteLine("# reachable methods: " + transitiveCallAnalysis.GetAllMethodDefinitions().Cardinality);
+
+#endif
+            Domains.AbstractEvalStack<Domains.VariableCharaterizationDomain> stack = new Domains.AbstractEvalStack<Domains.VariableCharaterizationDomain>(4);
+            var safe = (Domains.AbstractEvalStack<Domains.VariableCharaterizationDomain>)stack.Clone();
+            stack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.NULL));
+            stack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
+            stack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.BOTTOM));
+            stack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.NULL));
+            Console.WriteLine("STACK: \n" + stack.ToString());
+            stack.Pop();
+            Console.WriteLine("STACK: \n" + stack.ToString());
+            stack.Pop();
+            Console.WriteLine("STACK: \n" + stack.ToString());
+            stack.Pop();
+            Console.WriteLine("STACK: \n" + stack.ToString());
+            stack.Pop();
+            Console.WriteLine("STACK: \n" + stack.ToString());
+            stack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.NULL));
+
+            Console.WriteLine("STACK: \n" + stack.ToString());
+
+            var newStack = new Domains.AbstractEvalStack<Domains.VariableCharaterizationDomain>(4);
+            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
+            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.BOTTOM));
+            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
+            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.NULL));
+            Console.WriteLine("NEW STACK: \n" + newStack.ToString());
+
+            Console.Write("SUBSETEQ: " + stack.IsSubsetOrEqual(newStack) + "," + newStack.IsSubsetOrEqual(stack));
 
         }
 
