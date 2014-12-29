@@ -1,15 +1,11 @@
-﻿/*
- * 
- * 
- */
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using CODE = Mono.Cecil.Cil.Code;
 using DotNetAnalyser.Domains;
 
-namespace DotNetAnalyser.Analyser
+namespace DotNetAnalyser.Analyses
 {
     class TransitiveCallAnalysis 
     {
@@ -32,9 +28,6 @@ namespace DotNetAnalyser.Analyser
         /// <summary>
         /// Returns true if something has changed
         /// </summary>
-        /// <param name="reference"></param>
-        /// <param name="input"></param>
-        /// <returns></returns>
         public void ComputeEffect(MethodSummary<ReferenceSet<MethodDefinition>> input)
         {
             ReferenceSet<MethodDefinition> buffer = new ReferenceSet<MethodDefinition>();
@@ -67,7 +60,7 @@ namespace DotNetAnalyser.Analyser
 
             do
             {
-                tempValue = value.Clone() as  MethodSummary<ReferenceSet<MethodDefinition>>;
+                tempValue = value.Clone() as MethodSummary<ReferenceSet<MethodDefinition>>;
                 ComputeEffect(value);
                 //Console.WriteLine("New Result:");
                 //Console.WriteLine(value.ToString());

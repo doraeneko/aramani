@@ -6,7 +6,7 @@ using CODE = Mono.Cecil.Cil.Code;
 using DotNetAnalyser.Domains;
 
 
-namespace DotNetAnalyser.Analyser
+namespace DotNetAnalyser.Analyses
 {
 
     enum SimpleLattice : byte
@@ -16,6 +16,7 @@ namespace DotNetAnalyser.Analyser
         TRUE,
         FALSE,
         ZERO,
+        ONE,
         NOTZERO,
         NULL
     }

@@ -145,10 +145,16 @@ namespace DotNetAnalyser.Domains
             throw new System.NotImplementedException();
         }
 
-
         public bool IsSubsetOrEqual(TypeSet element)
         {
             return false;
+        }
+
+        public TypeSet CreateTopElement()
+        {
+            var result = new TypeSet();
+            result.isTop = true;
+            return result;
         }
     }
 }

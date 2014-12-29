@@ -1,8 +1,4 @@
-﻿/*
- * 
- * 
- */
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil;
 using CODE = Mono.Cecil.Cil.Code;
@@ -253,6 +249,13 @@ namespace DotNetAnalyser.Domains
                 result += "\n[" + entry + "] := \n" + methodEntries[entry].ToString() + "\n"; 
             }
 
+            return result;
+        }
+
+        public MethodSummary<T> CreateTopElement()
+        {
+            var result = new MethodSummary<T>();
+            result.isTop = true;
             return result;
         }
     }

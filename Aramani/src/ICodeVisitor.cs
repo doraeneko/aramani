@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Mono.Cecil.Cil;
 
 
-namespace DotNetAnalyser.Analyser
+namespace DotNetAnalyser.Analyses
 {
     interface ICodeVisitor<T>
     {

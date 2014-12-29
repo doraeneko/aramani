@@ -40,12 +40,18 @@
   <ItemGroup>
     <Compile Include="src\*.cs" />
     <Compile Include="src\App\*.cs" />
+    <Compile Include="src\Domains\AbstractEvalStack.cs" />
+    <Compile Include="src\Domains\AbstractTuple.cs" />
     <Compile Include="src\Domains\IDomainElement.cs" />
     <Compile Include="src\Domains\IEffectComputer.cs" />
     <Compile Include="src\Domains\MethodSummary.cs" />
     <Compile Include="src\Domains\ReferenceSet.cs" />
     <Compile Include="src\Domains\TypeSet.cs" />
-    <Compile Include="src\Analyses\*.cs" />
+    <Compile Include="src\Analyses\AnalysisIntraAccumulating.cs" />
+    <Compile Include="src\Analyses\LocalCallAnalysis.cs" />
+    <Compile Include="src\Analyses\SimpleLattice.cs" />
+    <Compile Include="src\Analyses\TransitiveCallAnalysis.cs" />
+    <Compile Include="src\Analyses\TypeAnalysis.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

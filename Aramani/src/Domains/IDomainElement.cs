@@ -28,6 +28,8 @@ namespace DotNetAnalyser.Domains
         void WidenWith(T element);
 
         bool IsSubsetOrEqual(T element);
+
+        T CreateTopElement();
 		
         #endregion
     }

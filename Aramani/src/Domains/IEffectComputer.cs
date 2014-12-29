@@ -10,6 +10,7 @@ using Mono.Cecil.Cil;
 namespace DotNetAnalyser.Domains
 {
     interface IEffectComputer<T>
+        where T : IDomainElement<T>
     {
         /// <summary>
         /// Compute the effect of an instruction <paramref name="instr"/>
@@ -21,6 +22,7 @@ namespace DotNetAnalyser.Domains
     }
 
     interface IMethodEffectComputer<T>
+        where T : IDomainElement<T>
     {
         /// <summary>
         /// Compute the effect of an instruction <paramref name="instr"/>

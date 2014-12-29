@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil;
+using DotNetAnalyser.Analyses;
 
-
-namespace DotNetAnalyser.Analyser.Driver
+namespace DotNetAnalyser.App
 {
 
 

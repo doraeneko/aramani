@@ -8,7 +8,7 @@ using Mono.Cecil.Cil;
 using CODE = Mono.Cecil.Cil.Code;
 using DotNetAnalyser.Domains;
 
-namespace DotNetAnalyser.Analyser
+namespace DotNetAnalyser.Analyses
 {
 	class TypeAnalysis : IEffectComputer<TypeSet>
 	{
