@@ -11,6 +11,33 @@ namespace DotNetAnalyser.Analyses
     {
 
 
+        public ReferenceSet<TypeDefinition> CreateSingletonInt32()
+        {
+            return null;
+        }
+
+        public ReferenceSet<TypeDefinition> CreateSingletonInt64()
+        {
+            return null;
+        }
+
+
+        public ReferenceSet<TypeDefinition> CreateSingletonFloat32()
+        {
+            return null;
+        }
+
+        public ReferenceSet<TypeDefinition> CreateSingletonFloat64()
+        {
+            return null;
+        }
+
+        public ReferenceSet<TypeDefinition> CreateSingletonNativeInt()
+        {
+            return null;
+        }
+
+
         public AbstractMethodFrame<ReferenceSet<TypeDefinition>> ComputeEffect 
                (Mono.Cecil.Cil.Instruction instr, 
                 AbstractMethodFrame<ReferenceSet<TypeDefinition>> value)
@@ -82,105 +109,80 @@ namespace DotNetAnalyser.Analyses
                     value.LocalVariables(opCode.Op1) = el1;
                     break;
                 case CODE.Ldnull:
+                    // TODO
                     break;
                 case CODE.Ldc_I4_M1:
-                    break;
                 case CODE.Ldc_I4_0:
-                    break;
                 case CODE.Ldc_I4_1:
-                    break;
                 case CODE.Ldc_I4_2:
-                    break;
                 case CODE.Ldc_I4_3:
-                    break;
                 case CODE.Ldc_I4_4:
-                    break;
                 case CODE.Ldc_I4_5:
-                    break;
                 case CODE.Ldc_I4_6:
-                    break;
                 case CODE.Ldc_I4_7:
-                    break;
                 case CODE.Ldc_I4_8:
-                    break;
                 case CODE.Ldc_I4_S:
-                    break;
                 case CODE.Ldc_I4:
+                    value.Stack.Push(CreateSingletonInt32());
                     break;
                 case CODE.Ldc_I8:
+                    value.Stack.Push(CreateSingletonInt64());
                     break;
                 case CODE.Ldc_R4:
+                    value.Stack.Push(CreateSingletonFloat32());
                     break;
                 case CODE.Ldc_R8:
+                    value.Stack.Push(CreateSingletonFloat64());
                     break;
                 case CODE.Dup:
+                    var el = value.Stack.Pop();
+                    value.Stack.Push(el);
+                    value.Stack.Push(el);
                     break;
                 case CODE.Pop:
+                    value.Stack.Pop();
                     break;
                 case CODE.Jmp:
+                    // NOP
                     break;
                 case CODE.Call:
+                    // TODO: get summary
                     break;
                 case CODE.Calli:
+                    // TODO: get summary
                     break;
                 case CODE.Ret:
-                    break;
                 case CODE.Br_S:
-                    break;
                 case CODE.Brfalse_S:
-                    break;
                 case CODE.Brtrue_S:
-                    break;
                 case CODE.Beq_S:
-                    break;
                 case CODE.Bge_S:
-                    break;
                 case CODE.Bgt_S:
-                    break;
                 case CODE.Ble_S:
-                    break;
                 case CODE.Blt_S:
-                    break;
                 case CODE.Bne_Un_S:
-                    break;
                 case CODE.Bge_Un_S:
-                    break;
                 case CODE.Bgt_Un_S:
-                    break;
                 case CODE.Ble_Un_S:
-                    break;
                 case CODE.Blt_Un_S:
-                    break;
                 case CODE.Br:
-                    break;
                 case CODE.Brfalse:
-                    break;
                 case CODE.Brtrue:
-                    break;
                 case CODE.Beq:
-                    break;
                 case CODE.Bge:
-                    break;
                 case CODE.Bgt:
-                    break;
                 case CODE.Ble:
-                    break;
                 case CODE.Blt:
-                    break;
                 case CODE.Bne_Un:
-                    break;
                 case CODE.Bge_Un:
-                    break;
                 case CODE.Bgt_Un:
-                    break;
                 case CODE.Ble_Un:
-                    break;
                 case CODE.Blt_Un:
-                    break;
                 case CODE.Switch:
+                    // IGNORE CONTROL FLOW FOR NOW
                     break;
                 case CODE.Ldind_I1:
-                    break;
+
                 case CODE.Ldind_U1:
                     break;
                 case CODE.Ldind_I2:

@@ -23,11 +23,18 @@ namespace DotNetAnalyser.Domains
         {
             get { return theLocalVariables; }
         }
+
         AbstractEvalStack<C> theStack;
         public AbstractEvalStack<C> Stack
         {
             get { return theStack; }
         }
+
+        AbstractTuple<C> theArguments;
+        public AbstractTuple<C> MethodArguments
+        {
+            get { return theArguments; }
+        } 
 
         public AbstractMethodFrame(MethodDefinition methodDef)
         {
@@ -37,6 +44,10 @@ namespace DotNetAnalyser.Domains
             if (methodDef.Body.HasVariables)
                 variablesCount = methodDef.Body.Variables.Count;
             theLocalVariables = new AbstractTuple<C>(variablesCount);
+            int parameterCount = 0;
+            if (methodDef.HasParameters)
+                parameterCount = methodDef.Parameters.Count;
+            theArguments = new AbstractTuple<C>(parameterCount);
         }
 
         public AbstractMethodFrame(int stackSize, int variablesCount)
@@ -44,9 +55,7 @@ namespace DotNetAnalyser.Domains
             theStack = new AbstractEvalStack<C>(stackSize);
             theLocalVariables = new AbstractTuple<C>(variablesCount);
         }
-
-
-   
+          
         #region IDomainElement implementation
 
         public void UnionWith(AbstractMethodFrame<C> element)
@@ -59,7 +68,6 @@ namespace DotNetAnalyser.Domains
         {
             theStack.JoinWith(element.theStack);
             theLocalVariables.JoinWith(element.theLocalVariables);
-
         }
 
         public void Negate()
