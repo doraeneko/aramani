@@ -3,11 +3,11 @@ using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil;
 using DotNetAnalyser.Analyses;
+using Mono.Cecil.Cil;
 
 namespace DotNetAnalyser.App
 {
-
-
+    
     public class Analyser
     {
         public static void Main()
@@ -19,12 +19,11 @@ namespace DotNetAnalyser.App
             resolver.AddSearchDirectory(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
             var myLibrary 
                 = AssemblyDefinition.ReadAssembly(inputFile, new ReaderParameters { AssemblyResolver = resolver });
- 
-            //DefaultAssemblyResolver ar;
+
 
             // try to locate the method...
             var type = myLibrary.MainModule.GetType(typeName);
-            var method = type.Methods.First(methodDef => methodDef.Name == methodName);
+            MethodDefinition method = type.Methods.First(methodDef => methodDef.Name == methodName);
             method.Resolve();
 
             Console.WriteLine("Performing a few simple analyses.");
@@ -74,13 +73,16 @@ namespace DotNetAnalyser.App
 
             var newStack = new Domains.AbstractEvalStack<Domains.VariableCharaterizationDomain>(4);
             newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
-            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.BOTTOM));
+            newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
             newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.TOP));
             newStack.Push(new Domains.VariableCharaterizationDomain(Domains.VariableCharaterization.NULL));
             Console.WriteLine("NEW STACK: \n" + newStack.ToString());
 
-            Console.Write("SUBSETEQ: " + stack.IsSubsetOrEqual(newStack) + "," + newStack.IsSubsetOrEqual(stack));
+            Console.WriteLine("SUBSETEQ: " + stack.IsSubsetOrEqual(newStack) + "," + newStack.IsSubsetOrEqual(stack));
 
+            var frame = new Domains.AbstractMethodFrame<Domains.ReferenceSet<TypeDefinition>>(method);
+            Console.WriteLine(frame.ToString());
+               
         }
 
     }

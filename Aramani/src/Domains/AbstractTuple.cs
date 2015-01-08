@@ -155,7 +155,7 @@ namespace DotNetAnalyser.Domains
         }
 
 
-        public AbstractTuple<C> CreateTopElement()
+        public virtual AbstractTuple<C> CreateTopElement()
         {
             var result = new AbstractTuple<C>(theTuple.Length);
             for (int i = 0; i < theTuple.Length; i++)

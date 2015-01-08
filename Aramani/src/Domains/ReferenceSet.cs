@@ -57,7 +57,6 @@ namespace DotNetAnalyser.Domains
         public bool IsTop
         {
             get { return isTop; }
-            
         }
 
         public bool IsBottom
