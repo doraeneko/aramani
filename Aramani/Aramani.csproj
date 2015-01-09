@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\IntermediateForm\MethodFlowGraph.cs" />
     <Compile Include="test\Domains\AbstractEvalStackTest.cs" />
   </ItemGroup>
   <ItemGroup>

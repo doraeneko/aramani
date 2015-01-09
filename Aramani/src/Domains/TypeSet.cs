@@ -1,8 +1,4 @@
-﻿/*
- * 
- * 
- */
-using System.Linq;
+﻿using System.Linq;
 using System.Collections.Generic;
 using Mono.Cecil;
 using CODE = Mono.Cecil.Cil.Code;

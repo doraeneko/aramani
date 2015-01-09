@@ -60,5 +60,16 @@ namespace DotNetAnalyser.Domains
 
             return result;
         }
+
+        public override AbstractTuple<C> CreateTopElement()
+        {
+            var result = new AbstractEvalStack<C>(Arity);
+            var top = result[0].CreateTopElement();
+            for (int i = 0; i < Arity; i++)
+            {
+                result.Push(top);
+            }
+            return result;
+        }
     }
 }
