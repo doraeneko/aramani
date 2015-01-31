@@ -18,7 +18,6 @@ namespace DotNetAnalyser.Analyses
              U startValue,
              IEffectComputer<U> transformer)
         {
-            // Console.WriteLine("CHECKING: " + methodDefinition + ", with: " + transformer);
             if (methodDefinition.Body != null)
             {
                 foreach (var instr in methodDefinition.Body.Instructions)
