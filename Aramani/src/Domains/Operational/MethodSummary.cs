@@ -6,7 +6,6 @@ using CODE = Mono.Cecil.Cil.Code;
 namespace DotNetAnalyser.Domains
 {
 
-
     class MethodSummary<T> : IDomainElement<MethodSummary<T>>
         where T : class, IDomainElement<T>, new()
     {
@@ -252,12 +251,28 @@ namespace DotNetAnalyser.Domains
             return result;
         }
 
-        public MethodSummary<T> CreateTopElement()
+        public void ToTopElement()
         {
-            var result = new MethodSummary<T>();
-            result.isTop = true;
+            isTop = true;
+            methodEntries.Clear();
+        }
+
+        public string Description()
+        {
+            if (IsTop)
+                return "TOP";
+            else if (IsBottom)
+                return "BOT";
+            var result = "{\n";
+            foreach (var element in methodEntries.Keys)
+            {
+                result += element.FullName;
+                result += "\n";
+            }
+            result += "}\n";
             return result;
         }
+
     }
 
 }

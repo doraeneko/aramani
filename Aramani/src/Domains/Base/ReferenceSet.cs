@@ -175,14 +175,31 @@ namespace DotNetAnalyser.Domains
             return result;
         }
 
-        public ReferenceSet<T> CreateTopElement()
+        public void ToTopElement()
         {
-            var result = new ReferenceSet<T>();
-            result.isTop = true;
+            isTop = true;
+            theSet.Clear();
+        }
+
+
+        public string Description()
+        {
+            if (isTop)
+                return "TOP";
+            else if (IsBottom)
+                return "BOT";
+            var result = "{\n";
+            foreach (var element in theSet)
+            {
+                result += element.ToString();
+                result += "\n";
+            }
+            result += "}\n";
             return result;
         }
 
         #endregion
+
     }
 
 }

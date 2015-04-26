@@ -85,9 +85,9 @@ namespace DotNetAnalyser.Domains
 
         }
 
-        public VariableCharaterizationDomain CreateTopElement()
+        public void ToTopElement()
         {
-            return new VariableCharaterizationDomain(VariableCharaterization.TOP);
+            theElement = VariableCharaterization.TOP;
         }
 
         public object Clone()
@@ -107,6 +107,12 @@ namespace DotNetAnalyser.Domains
                     return "<TOP>";
             }
             return "";
+        }
+
+
+        public string Description()
+        {
+            return ToString();
         }
     }
 }

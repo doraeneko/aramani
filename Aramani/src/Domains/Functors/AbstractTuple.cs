@@ -12,7 +12,7 @@ namespace DotNetAnalyser.Domains
 
         #region /* Private members */
 
-        C[] theTuple;
+        protected C[] theTuple;
 
         #endregion
 
@@ -122,7 +122,7 @@ namespace DotNetAnalyser.Domains
             {
                 if (!theTuple[i].IsTop)
                 {
-                    theTuple[i] = theTuple[i].CreateTopElement();
+                    theTuple[i].ToTopElement();
                 }
             }
         }
@@ -155,15 +155,31 @@ namespace DotNetAnalyser.Domains
         }
 
 
-        public virtual AbstractTuple<C> CreateTopElement()
+        public virtual void ToTopElement()
         {
-            var result = new AbstractTuple<C>(theTuple.Length);
             for (int i = 0; i < theTuple.Length; i++)
             {
-                result.theTuple[i] = theTuple[0].CreateTopElement();
+                theTuple[i].ToTopElement();
             }
+        }
+
+
+        public virtual string Description()
+        {
+            if (IsTop)
+                return "TOP";
+            else if (IsBottom)
+                return "BOT";
+            var result = "((\n";
+            foreach (var element in theTuple)
+            {
+                result += element.Description();
+            }
+            result += "))\n";
             return result;
         }
+
+
     }
 
 }

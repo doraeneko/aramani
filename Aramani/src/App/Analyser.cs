@@ -12,9 +12,9 @@ namespace DotNetAnalyser.App
     {
         public static void Main()
         {
-            var inputFile = "Aramani.exe";
+            var inputFile = @"c:\users\andreas\Documents\sandbox\test1.exe";
             var methodName = "Main";
-            var typeName = "DotNetAnalyser.App.Analyser";
+            var typeName = "A";
             var resolver = new DefaultAssemblyResolver();
             resolver.AddSearchDirectory(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
             var myLibrary 
@@ -27,6 +27,20 @@ namespace DotNetAnalyser.App
             method.Resolve();
 
             Console.WriteLine("Performing a few simple analyses.");
+
+            DotNetAnalyser.IntermediateForm.MethodFlowGraph g 
+                = new DotNetAnalyser.IntermediateForm.MethodFlowGraph(method);
+
+            g.PrintDescription();
+            g.ComputeJumpTargets();
+            g.GenerateBasicBlocks();
+            g.PrintDescription();
+            System.IO.File.WriteAllText(@"C:\Users\andreas\Documents\sandbox\graph.dot", g.AsDot());
+
+
+            Console.WriteLine(">>>\n" + g.AsDot());
+            Console.Read();
+            return;
 #if BLUBB
             // Type analysis
             Console.WriteLine("Performing type analysis.");
@@ -81,7 +95,8 @@ namespace DotNetAnalyser.App
             Console.WriteLine("SUBSETEQ: " + stack.IsSubsetOrEqual(newStack) + "," + newStack.IsSubsetOrEqual(stack));
             //var frame = new Domains.AbstractMethodFrame<Domains.ReferenceSet<TypeDefinition>>(method);
             //Console.WriteLine(frame.ToString());
-               
+            Console.Read();   
+
         }
 
     }

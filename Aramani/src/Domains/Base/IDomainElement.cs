@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DotNetAnalyser.Domains
 {
-    interface IDomainElement<T> : ICloneable
+    interface IDomainElement<in T> : ICloneable
     {
 
         #region /* Properties */
@@ -29,7 +29,9 @@ namespace DotNetAnalyser.Domains
 
         bool IsSubsetOrEqual(T element);
 
-        T CreateTopElement();
+        void ToTopElement();
+
+        string Description();
 		
         #endregion
     }

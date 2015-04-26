@@ -10,16 +10,21 @@ using Mono.Cecil.Cil;
 namespace DotNetAnalyser.Domains
 {
 
-    /// <summary>
+    /// <summary><
     /// Models an eval stack of a method frame.
     /// The top of the stack is always at index 0; this complicates push and pop,
     /// but facilitates the union and join operations (which are the same as 
-    /// for normal elements of the tuple domain).
+    /// for ordinary elements of the tuple domain).
     /// </summary>
     /// <typeparam name="C"></typeparam>
-    class AbstractEvalStack<C> : AbstractTuple<C>
+    class AbstractEvalStack<C> : AbstractTuple<C>, IDomainElement<AbstractEvalStack<C>>
         where C: class, IDomainElement<C>, new()
     {
+
+        public AbstractEvalStack()
+            : base(1)
+        {
+        }
 
         public AbstractEvalStack(int size)
             : base(size)
@@ -40,7 +45,8 @@ namespace DotNetAnalyser.Domains
         public C Pop()
         {
             var result = this[0];
-            C buffer = this[0].CreateTopElement();
+            C buffer = new C(); // !!!
+            buffer.ToTopElement();
             for (int i = this.Arity - 1; i >= 0; i--)
             {
                 var temp = this[i];
@@ -61,15 +67,31 @@ namespace DotNetAnalyser.Domains
             return result;
         }
 
-        public override AbstractTuple<C> CreateTopElement()
+        public override void ToTopElement()
         {
-            var result = new AbstractEvalStack<C>(Arity);
-            var top = result[0].CreateTopElement();
-            for (int i = 0; i < Arity; i++)
-            {
-                result.Push(top);
-            }
-            return result;
+            base.ToTopElement();
         }
+
+
+        public void UnionWith(AbstractEvalStack<C> element)
+        {
+            base.UnionWith(element);
+        }
+
+        public void JoinWith(AbstractEvalStack<C> element)
+        {
+            base.JoinWith(element);
+        }
+
+        public void WidenWith(AbstractEvalStack<C> element)
+        {
+            base.WidenWith(element);
+        }
+
+        public bool IsSubsetOrEqual(AbstractEvalStack<C> element)
+        {
+            return base.IsSubsetOrEqual(element);
+        }
+
     }
 }

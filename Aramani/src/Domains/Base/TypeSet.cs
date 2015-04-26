@@ -146,10 +146,26 @@ namespace DotNetAnalyser.Domains
             return false;
         }
 
-        public TypeSet CreateTopElement()
+        public void ToTopElement()
         {
-            var result = new TypeSet();
-            result.isTop = true;
+            isTop = true;
+            Clear();
+        }
+
+
+        public string Description()
+        {
+            if (isTop)
+                return "_|_";
+            else if (IsBottom)
+                return "{}";
+            var result = "{\n";
+            foreach (var element in this.Keys)
+            {
+                result += element.FullName;
+                result += "\n";
+            }
+            result += "}\n";
             return result;
         }
     }
