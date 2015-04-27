@@ -56,8 +56,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="src\Domains\Finite\OneNull.cs" />
     <Compile Include="src\Domains\Functors\ReducedProduct.cs" />
+    <Compile Include="src\Domains\Operational\LocalVariables.cs" />
     <Compile Include="src\Domains\Operational\MethodFrame.cs" />
+    <Compile Include="src\Domains\Operational\TypeAnalysisMethodFrame.cs" />
     <Compile Include="src\IntermediateForm\BasicBlock.cs" />
     <Compile Include="src\IntermediateForm\MethodFlowGraph.cs" />
     <Compile Include="test\Domains\AbstractEvalStackTest.cs" />

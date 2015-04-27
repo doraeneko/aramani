@@ -22,7 +22,7 @@ namespace DotNetAnalyser.Analyses
             {
                 foreach (var instr in methodDefinition.Body.Instructions)
                 {
-                    startValue.UnionWith(transformer.ComputeEffect(instr, startValue));
+                  //  startValue.UnionWith(transformer.ComputeEffect(instr, startValue));
                 }
             }
             return startValue;

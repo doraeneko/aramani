@@ -14,9 +14,9 @@ namespace DotNetAnalyser.Domains
 
         #region /* Components */
 
-        AbstractEvalStack<S> EvalStack { get { return this.Component1; } }
-        L localVariables { get { return this.Component2; }}
-        P parameters { get { return this.Component3; } }
+        protected AbstractEvalStack<S> EvalStack { get { return this.Component1; } }
+        protected L localVariables { get { return this.Component2; }}
+        protected P parameters { get { return this.Component3; } }
 
         #endregion
 

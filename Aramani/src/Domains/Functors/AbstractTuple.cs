@@ -18,6 +18,11 @@ namespace DotNetAnalyser.Domains
 
         #region /* Constructors */
 
+        public AbstractTuple()
+            : this(0)
+        {
+        }
+
         public AbstractTuple(int size)
         {
             theTuple = new C[size];
@@ -53,10 +58,10 @@ namespace DotNetAnalyser.Domains
             {
                 foreach (var entry in theTuple)
                 {
-                    if (entry != null && !entry.IsBottom)
-                        return false;
+                    if (entry == null || entry.IsBottom)
+                        return true;
                 }
-                return true;
+                return false;
             }
 
         }
@@ -170,16 +175,13 @@ namespace DotNetAnalyser.Domains
                 return "TOP";
             else if (IsBottom)
                 return "BOT";
-            var result = "((\n";
+            var result = "((";
             foreach (var element in theTuple)
             {
-                result += element.Description();
+                result += element.Description() + " ";
             }
-            result += "))\n";
+            result += "))";
             return result;
         }
-
-
     }
-
 }

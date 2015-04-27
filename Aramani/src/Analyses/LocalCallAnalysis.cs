@@ -27,21 +27,21 @@ namespace DotNetAnalyser.Analyses
             }
         }
 
-        public ReferenceSet<MethodDefinition> ComputeEffect(Mono.Cecil.Cil.Instruction instr, ReferenceSet<MethodDefinition> input)
+        public void ComputeEffect(Mono.Cecil.Cil.Instruction instruction)
         {
-            var opCode = instr.OpCode;
+            var opCode = instruction.OpCode;
             switch (opCode.Code)
             {
                 case CODE.Call:
                 case CODE.Callvirt:
                 case CODE.Newobj:
                 case CODE.Ldftn:
-                    AddOperandIfMethodReference(input, instr.Operand);
+                   
                     break;
                 default:
                     break;
             }
-            return input;
+
         }
     }
 }

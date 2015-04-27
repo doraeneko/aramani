@@ -17,7 +17,7 @@ namespace DotNetAnalyser.Domains
         /// having <paramref name="input"/> as precondition (or postcondition)
         /// </summary>
         /// <param name="inputs"></param>
-        T ComputeEffect(Instruction instr, T input);
+       void ComputeEffect(Instruction instruction);
        
     }
 

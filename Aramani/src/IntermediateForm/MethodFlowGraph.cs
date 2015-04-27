@@ -20,6 +20,8 @@ namespace DotNetAnalyser.IntermediateForm
         Mono.Cecil.MethodDefinition bytecodeMethod;
         List<BasicBlock> basicBlocks;
 
+        public List<BasicBlock> BasicBlocks { get { return basicBlocks; } }
+
         public MethodFlowGraph(Mono.Cecil.MethodDefinition method)
         {
             bytecodeMethod = method;
@@ -168,7 +170,7 @@ namespace DotNetAnalyser.IntermediateForm
             }
         }
 
-        abstract class BasicBlock
+        public abstract class BasicBlock
         {
             public MethodDefinition itsMethod;
 

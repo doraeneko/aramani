@@ -42,6 +42,12 @@ namespace DotNetAnalyser.Domains
             }
         }
 
+
+        public C Top()
+        {
+            return this[0];
+        }
+
         public C Pop()
         {
             var result = this[0];

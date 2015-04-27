@@ -17,6 +17,12 @@ namespace DotNetAnalyser.Domains
         public T1 Component1 { get { return component1; } }
         public T2 Component2 { get { return component2; } }
 
+        public ReducedProduct()
+        {
+            component1 = new T1();
+            component2 = new T2();
+        }
+
         public ReducedProduct(T1 c1, T2 c2)
         {
             component1 = c1;
@@ -108,6 +114,13 @@ namespace DotNetAnalyser.Domains
         public T2 Component2 { get { return component2; } }
         public T3 Component3 { get { return component3; } }
 
+        public ReducedProduct()
+        {
+            component1 = new T1();
+            component2 = new T2();
+            component3 = new T3();
+        
+        }
 
         public ReducedProduct(T1 c1, T2 c2, T3 c3)
         {
@@ -121,8 +134,8 @@ namespace DotNetAnalyser.Domains
             get
             {
                 return component1.IsTop
-                         && component2.IsTop
-                         && component3.IsTop;
+                       && component2.IsTop
+                       && component3.IsTop;
             }
         }
 
@@ -131,8 +144,8 @@ namespace DotNetAnalyser.Domains
             get
             {
                 return component1.IsBottom
-                    || component2.IsBottom
-                    || component3.IsBottom;
+                       || component2.IsBottom
+                       || component3.IsBottom;
             }
         }
 
@@ -199,7 +212,7 @@ namespace DotNetAnalyser.Domains
             result += component2.Description();
             result += ",\n";
             result += component3.Description();
-            result += ")\n";
+            result += "\n)\n";
             return result;
         }
     }

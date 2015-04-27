@@ -39,6 +39,28 @@ namespace DotNetAnalyser.App
 
 
             Console.WriteLine(">>>\n" + g.AsDot());
+            var input = new DotNetAnalyser.Domains.TypeAnalysisMethodFrame(method);
+
+           
+            input.Negate();
+            var bb1 = g.BasicBlocks[0];
+            var bb2 = g.BasicBlocks[1];
+            var bb3 = g.BasicBlocks[2];
+
+            input.ComputeEffect(bb1);
+            var old = input.Clone() as DotNetAnalyser.Domains.TypeAnalysisMethodFrame;
+            Console.WriteLine("AFTER FIRST BLOCK:" + input);
+            var out1 = input.Clone() as DotNetAnalyser.Domains.TypeAnalysisMethodFrame;
+            
+
+            out1.ComputeEffect(bb2);
+
+            Console.WriteLine("O1:" + input.Description());
+            Console.WriteLine("O2:" + out1.Description());
+            input.UnionWith(out1);
+
+            Console.WriteLine("UNION:" + input.Description());
+            Console.WriteLine("OLD:" + old.Description());
             Console.Read();
             return;
 #if BLUBB
