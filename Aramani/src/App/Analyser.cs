@@ -13,7 +13,7 @@ namespace DotNetAnalyser.App
         public static void Main()
         {
             var inputFile = @"c:\users\andreas\Documents\sandbox\test1.exe";
-            var methodName = "Main";
+            var methodName = "Foo";
             var typeName = "A";
             var resolver = new DefaultAssemblyResolver();
             resolver.AddSearchDirectory(System.Runtime.InteropServices.RuntimeEnvironment.GetRuntimeDirectory());
@@ -44,10 +44,15 @@ namespace DotNetAnalyser.App
            
             input.Negate();
             var bb1 = g.BasicBlocks[0];
-            var bb2 = g.BasicBlocks[1];
-            var bb3 = g.BasicBlocks[2];
+
 
             input.ComputeEffect(bb1);
+            Console.WriteLine("AFTER FIRST BLOCK:" + input);
+            Console.Read();
+            return;
+            
+            var bb2 = g.BasicBlocks[1];
+            var bb3 = g.BasicBlocks[2];
             var old = input.Clone() as DotNetAnalyser.Domains.TypeAnalysisMethodFrame;
             Console.WriteLine("AFTER FIRST BLOCK:" + input);
             var out1 = input.Clone() as DotNetAnalyser.Domains.TypeAnalysisMethodFrame;
