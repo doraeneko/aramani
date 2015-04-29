@@ -61,10 +61,21 @@ namespace DotNetAnalyser.IntermediateForm
         public static bool IsBranchCommand
             (Mono.Cecil.Cil.Instruction instruction)
         {
-            return instruction.OpCode.Code >= CODE.Br_S 
-                && instruction.OpCode.Code <= Code.Blt_Un;
+            return 
+                (instruction.OpCode.Code >= CODE.Br_S 
+                 && instruction.OpCode.Code <= Code.Blt_Un)
+                || instruction.OpCode.Code == Code.Ret
+                || instruction.OpCode.Code == Code.Rethrow;
         }
 
+        public static bool IsCallCommand
+            (Mono.Cecil.Cil.Instruction instruction)
+        {
+            return
+                instruction.OpCode.Code == Code.Call
+                || instruction.OpCode.Code == Code.Calli
+                || instruction.OpCode.Code == Code.Callvirt;
+        }
 
         public HashSet<Instruction> ComputeJumpTargets()
         {
@@ -77,10 +88,8 @@ namespace DotNetAnalyser.IntermediateForm
                 {
                     // add target to set
                     result.Add(instruction.Operand as Instruction);
-                    Console.WriteLine(">>" + instruction.Operand);
                 }
             }
-            
             return result;
         }
 
@@ -100,39 +109,44 @@ namespace DotNetAnalyser.IntermediateForm
                  counter++)
             {
                 var currentInstruction = instructions[counter];
-                if (startPosition < counter &&
-                    jumpTargets.Contains(currentInstruction))
+                // If the current instruction is the target of a jump,
+                // unify preceeding instructions into a basic block.
+                if (startPosition < counter 
+                    && (jumpTargets.Contains(currentInstruction) || IsCallCommand(currentInstruction)))
                 {
-                    var block = new SingleSuccessorBlock(bytecodeMethod, startPosition, counter - 1);
+                    var block = new SingleSuccessorBlock
+                        (bytecodeMethod, startPosition, counter - 1);
                     headerToBlock.Add(instructions[startPosition], block);
                     basicBlocks.Add(block);
                     startPosition = counter;
-                    Console.WriteLine("WILMA 1");
-
                 }
-                if (IsBranchCommand(currentInstruction))
+                if (IsBranchCommand(currentInstruction) || IsCallCommand(currentInstruction))
                 {
                     BasicBlock block = null;
-                    if ( currentInstruction.OpCode.Code == CODE.Br 
+                    if (currentInstruction.OpCode.Code == CODE.Ret
+                        || currentInstruction.OpCode.Code == CODE.Rethrow)
+                    {
+                        block = new EndBlock(bytecodeMethod, startPosition, counter);
+                    }
+                    else if (currentInstruction.OpCode.Code == CODE.Br 
                         || currentInstruction.OpCode.Code == CODE.Br_S)
                     {
                         block = new SingleSuccessorBlock(bytecodeMethod, startPosition, counter);
-
-                        Console.WriteLine("WILMA 2");
+                    }
+                    else if (IsCallCommand(currentInstruction))
+                    {
+                        block = new CallBlock(bytecodeMethod, startPosition, counter);
                     }
                     else
                     {
                         block = new BranchingBlock(bytecodeMethod, startPosition, counter);
-
-                        Console.WriteLine("WILMA 3");
-                    
                     }
                     headerToBlock.Add(instructions[startPosition], block);
                     basicBlocks.Add(block);
                     startPosition = counter + 1;
                 }
             }
-            if (startPosition != instructions.Count-1)
+            if (startPosition < instructions.Count)
             {
                 var block = new EndBlock(bytecodeMethod, startPosition, instructions.Count - 1);
                 headerToBlock.Add(instructions[startPosition], block);
@@ -145,8 +159,8 @@ namespace DotNetAnalyser.IntermediateForm
                 var singleSuccBlock = block as SingleSuccessorBlock;
                 if (singleSuccBlock != null)
                 {
-                    if (singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br ||
-                        singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br_S)
+                    if (singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br 
+                        || singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br_S)
                     {
                         // actual jump
                         singleSuccBlock.Successor 
@@ -285,6 +299,23 @@ namespace DotNetAnalyser.IntermediateForm
                     + Successor.GetHashCode() + ";\n";
                 return result;
             }
+
+        }
+
+        class CallBlock : SingleSuccessorBlock
+        {
+
+
+
+            public CallBlock
+                (MethodDefinition itsMethod,
+                 int entryPosition,
+                 int endPosition,
+                 BasicBlock successor = null) :
+                base(itsMethod, entryPosition, endPosition, successor)
+            {
+            }
+
 
         }
 
