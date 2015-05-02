@@ -10,13 +10,5 @@ using DotNetAnalyser.Domains;
 
 namespace DotNetAnalyser.Analyses
 {
-	class TypeAnalysis : IEffectComputer<TypeSet>
-	{
 
-		public void ComputeEffect(Mono.Cecil.Cil.Instruction instruction)
-		{
-
-
-		}
-	}
 }

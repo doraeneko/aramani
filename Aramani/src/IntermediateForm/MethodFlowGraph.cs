@@ -11,22 +11,51 @@ using CODE = Mono.Cecil.Cil.Code;
 namespace DotNetAnalyser.IntermediateForm
 {
 
+
+    public enum FlowEdgeKind
+    {
+        NORMAL,
+        COND_IF,
+        COND_ELSE
+    }
+
+    public class FlowEdge
+    {
+        public FlowEdgeKind Kind;
+        public BasicBlock Source, Target;
+        public Mono.Cecil.Cil.Instruction BranchInstruction;
+    }
+
     /// <summary>
-    /// Contains a control flow graph of a bytecode method.
+    /// A control flow graph of a bytecode method.
     /// </summary>
     public class MethodFlowGraph
     {
 
         Mono.Cecil.MethodDefinition bytecodeMethod;
         List<BasicBlock> basicBlocks;
+        List<FlowEdge> edges;
 
         public List<BasicBlock> BasicBlocks { get { return basicBlocks; } }
+
+        public BasicBlock StartBlock
+        {
+            get
+            {
+                if (basicBlocks != null
+                    && basicBlocks.Count > 0)
+                {
+                    return basicBlocks[0];
+                }
+                return null;
+            }
+        }
 
         public MethodFlowGraph(Mono.Cecil.MethodDefinition method)
         {
             bytecodeMethod = method;
+            edges = new List<FlowEdge>();
         }
-
 
         public string AsDot()
         {
@@ -39,36 +68,44 @@ namespace DotNetAnalyser.IntermediateForm
 
             result += "\n}\n";
             return result;
-
         }
+
         public void PrintDescription()
         {
-            foreach (var instruction
-                     in bytecodeMethod.Body.Instructions)
-            {
-
-                System.Console.WriteLine(
-                    "CODE: {0} OP: {1} OFF: {2}", instruction.OpCode.Code, instruction.Operand, instruction.Offset);
-            }
-
-            
             foreach (var block in basicBlocks??(new List<BasicBlock>()))
             {
                 block.Description();
             }
         }
 
-        public static bool IsBranchCommand
+        FlowEdge RegisterEdge
+            (FlowEdgeKind kind,
+             BasicBlock source, 
+             BasicBlock target, 
+             Mono.Cecil.Cil.Instruction branchInstruction = null)
+        {
+            var result = new FlowEdge();
+            result.BranchInstruction = branchInstruction;
+            result.Source = source;
+            result.Target = target;
+            result.Kind = kind;
+            edges.Add(result);
+            source.Successors.Add(result);
+            target.Predecessors.Add(result);
+            return result;
+        }
+
+        static bool IsBranchCommand
             (Mono.Cecil.Cil.Instruction instruction)
         {
             return 
                 (instruction.OpCode.Code >= CODE.Br_S 
                  && instruction.OpCode.Code <= Code.Blt_Un)
-                || instruction.OpCode.Code == Code.Ret
-                || instruction.OpCode.Code == Code.Rethrow;
+                 || instruction.OpCode.Code == Code.Ret
+                 || instruction.OpCode.Code == Code.Rethrow;
         }
 
-        public static bool IsCallCommand
+        static bool IsCallCommand
             (Mono.Cecil.Cil.Instruction instruction)
         {
             return
@@ -79,7 +116,6 @@ namespace DotNetAnalyser.IntermediateForm
 
         public HashSet<Instruction> ComputeJumpTargets()
         {
-
             var result = new HashSet<Instruction>();
             foreach (var instruction
                      in bytecodeMethod.Body.Instructions)
@@ -97,6 +133,7 @@ namespace DotNetAnalyser.IntermediateForm
         public void GenerateBasicBlocks()
         {
             basicBlocks = new List<BasicBlock>();
+
             // First step: Compute jump targets
             var jumpTargets = ComputeJumpTargets();
             var startPosition = 0;
@@ -112,7 +149,8 @@ namespace DotNetAnalyser.IntermediateForm
                 // If the current instruction is the target of a jump,
                 // unify preceeding instructions into a basic block.
                 if (startPosition < counter 
-                    && (jumpTargets.Contains(currentInstruction) || IsCallCommand(currentInstruction)))
+                    && (jumpTargets.Contains(currentInstruction) 
+                        || IsCallCommand(currentInstruction)))
                 {
                     var block = new SingleSuccessorBlock
                         (bytecodeMethod, startPosition, counter - 1);
@@ -153,211 +191,45 @@ namespace DotNetAnalyser.IntermediateForm
                 basicBlocks.Add(block);
             }
 
-            // Now generate the edges
+            // Generate the edges
             foreach (var block in basicBlocks)
             {
                 var singleSuccBlock = block as SingleSuccessorBlock;
                 if (singleSuccBlock != null)
                 {
+                    BasicBlock successor;
                     if (singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br 
                         || singleSuccBlock.LastInstruction.OpCode.Code == CODE.Br_S)
                     {
-                        // actual jump
-                        singleSuccBlock.Successor 
-                            = headerToBlock[singleSuccBlock.LastInstruction.Operand as Instruction];
+                        successor = 
+                            headerToBlock[singleSuccBlock.LastInstruction.Operand as Instruction];
                     }
                     else
                     {
-                        singleSuccBlock.Successor
-                            = headerToBlock[singleSuccBlock.NextInstruction as Instruction];
+                        successor = 
+                            headerToBlock[singleSuccBlock.FollowingInstruction as Instruction];
+
                     }
+                    singleSuccBlock.Successor = successor;
+                    RegisterEdge(FlowEdgeKind.NORMAL, singleSuccBlock, successor, null);
                     continue;
                 }
                 var branchBlock = block as BranchingBlock;
                 if (branchBlock != null)
                 {
-                    branchBlock.IfBranch
+                    var ifSuccessorBlock 
                         = headerToBlock[branchBlock.LastInstruction.Operand as Instruction];
+                    branchBlock.IfBranch
+                        = ifSuccessorBlock;
+                    RegisterEdge(FlowEdgeKind.COND_IF, branchBlock, ifSuccessorBlock, branchBlock.LastInstruction);
+                    var elseSuccessorBlock 
+                        = headerToBlock[branchBlock.FollowingInstruction];
                     branchBlock.ElseBranch
-                        = headerToBlock[branchBlock.NextInstruction];
+                        = elseSuccessorBlock;
+                    RegisterEdge(FlowEdgeKind.COND_ELSE, branchBlock, elseSuccessorBlock, branchBlock.LastInstruction);
                 }
             }
         }
-
-        public abstract class BasicBlock
-        {
-            public MethodDefinition itsMethod;
-
-            int entryPosition;
-            int endPosition;
-
-            public Instruction LastInstruction { get { return itsMethod.Body.Instructions[endPosition];  } }
-            
-            public Instruction NextInstruction { 
-                get {
-                    if (itsMethod.Body.Instructions.Count > endPosition + 1)
-                        return itsMethod.Body.Instructions[endPosition + 1];
-                    else
-                        return null;
-                }
-            }
-
-            public IEnumerable<Instruction> Instructions
-            {
-                get
-                {
-                    var instructions = itsMethod.Body.Instructions;
-                    for (int i = entryPosition; i <= endPosition; i++)
-                    {
-                        yield return instructions[i];
-                    }
-                }
-            }
-
-            public virtual string AsDot()
-            {
-                var result
-                    = "\"n" + GetHashCode() + "\" [shape=\"Mrecord\";label=\"";
-                foreach (var instruction in Instructions)
-                {
-                    result += "" + instruction.OpCode.Code + " " + instruction.Operand + " [" + instruction.Offset + "]\\n";
-                }
-                result += "\"];\n";
-                return result;
-            }
-
-            public void Description()
-            {
-                Console.WriteLine("**********");
-                foreach (var instruction in Instructions)
-                {
-                    Console.WriteLine
-                        ("CODE: {0} OP: {1} OFF: {2}",
-                         instruction.OpCode.Code, 
-                         instruction.Operand, 
-                         instruction.Offset);
-                }
-                Console.WriteLine("**********");
-
-            }
-
-            public BasicBlock(MethodDefinition itsMethod, 
-                              int entryPosition, 
-                              int endPosition)
-            {
-                this.itsMethod = itsMethod;
-                this.endPosition = endPosition;
-                this.entryPosition = entryPosition;
-            }
-
-            public abstract IEnumerable<BasicBlock> Successors();
-
-        }
-
-
-        class EndBlock : BasicBlock
-        {
-
-            public EndBlock(MethodDefinition itsMethod,
-                      int entryPosition,
-                      int endPosition)
-                : base(itsMethod, entryPosition, endPosition)
-            { }
-
-            public override IEnumerable<BasicBlock> Successors()
-            {
-                return new BasicBlock[] { };
-            }
-
-        }
-
-        class SingleSuccessorBlock: BasicBlock
-        {
-
-            public BasicBlock Successor { get; set; }
-            
-            public SingleSuccessorBlock
-                (MethodDefinition itsMethod, 
-                 int entryPosition, 
-                 int endPosition,
-                 BasicBlock successor = null):
-                base (itsMethod, entryPosition, endPosition)
-            {
-                Successor = successor;
-            }
-
-            public override IEnumerable<BasicBlock> Successors()
-            {
-                return new BasicBlock[] { Successor };
-            }
-
-            public override string AsDot()
-            {
-                var result = base.AsDot();
-                result = result + "n" 
-                    + this.GetHashCode() + "-> n" 
-                    + Successor.GetHashCode() + ";\n";
-                return result;
-            }
-
-        }
-
-        class CallBlock : SingleSuccessorBlock
-        {
-
-
-
-            public CallBlock
-                (MethodDefinition itsMethod,
-                 int entryPosition,
-                 int endPosition,
-                 BasicBlock successor = null) :
-                base(itsMethod, entryPosition, endPosition, successor)
-            {
-            }
-
-
-        }
-
-        class BranchingBlock: BasicBlock
-        {
-           public BasicBlock IfBranch { get; set; }
-           public BasicBlock ElseBranch { get; set; }
-
-            public BranchingBlock
-                (MethodDefinition itsMethod, 
-                 int entryPosition, 
-                 int endPosition,
-                 BasicBlock ifBlock = null,
-                 BasicBlock elseBlock = null):
-                base (itsMethod, entryPosition, endPosition)
-            {
-                IfBranch = ifBlock;
-                ElseBranch = elseBlock;
-            }
-
-            public override IEnumerable<BasicBlock> Successors()
-            {
-                return new BasicBlock[] { IfBranch, ElseBranch };
-            }
-
-
-            public override string AsDot()
-            {
-                var result = base.AsDot();
-                result = result + "n"
-                    + this.GetHashCode() + "-> n"
-                    + IfBranch.GetHashCode() + " [label=\"IF\"];\n";
-                result = result + "n"
-                    + this.GetHashCode() + "-> n"
-                    + ElseBranch.GetHashCode() + " [label=\"ELSE\"];\n";
-                return result;
-            }
-        }
-
-        
-
     }
-
 }
 

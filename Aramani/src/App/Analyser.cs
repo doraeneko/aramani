@@ -35,9 +35,11 @@ namespace DotNetAnalyser.App
             g.ComputeJumpTargets();
             g.GenerateBasicBlocks();
             g.PrintDescription();
-            System.IO.File.WriteAllText(@"C:\Users\andreas\Documents\sandbox\graph.dot", g.AsDot());
+            System.IO.File.WriteAllText(@"C:\Users\andreas\Desktop\graph.dot", g.AsDot());
 
-
+            string strCmdText;
+            strCmdText = @"C:\Users\andreas\Desktop\graph.dot";
+            System.Diagnostics.Process.Start(@"C:\Users\andreas\Desktop\xdot.py", strCmdText);
             Console.WriteLine(">>>\n" + g.AsDot());
             var input = new DotNetAnalyser.Domains.TypeAnalysisMethodFrame(method);
 
@@ -48,7 +50,22 @@ namespace DotNetAnalyser.App
 
             input.ComputeEffect(bb1);
             Console.WriteLine("AFTER FIRST BLOCK:" + input);
+
+
+            var bottom = new DotNetAnalyser.Domains.TypeAnalysisMethodFrame(method);
+            var top = bottom.Clone() as DotNetAnalyser.Domains.TypeAnalysisMethodFrame;
+            top.ToTopElement();
+            var analysis = new 
+            DotNetAnalyser.IntermediateForm.ForwardAnalysisProcessor<DotNetAnalyser.Domains.TypeAnalysisMethodFrame>(top);
+
+            analysis.InitValuesForMethod(g);
+            while (!analysis.PerformForwardIteration(g)) { }
+
+            analysis.Description(g);
+            
+
             Console.Read();
+
             return;
             
             var bb2 = g.BasicBlocks[1];

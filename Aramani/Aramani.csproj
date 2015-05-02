@@ -61,7 +61,9 @@
     <Compile Include="src\Domains\Operational\LocalVariables.cs" />
     <Compile Include="src\Domains\Operational\MethodFrame.cs" />
     <Compile Include="src\Domains\Operational\TypeAnalysisMethodFrame.cs" />
+    <Compile Include="src\IntermediateForm\AnalysisForwardProcessor.cs" />
     <Compile Include="src\IntermediateForm\BasicBlock.cs" />
+    <Compile Include="src\IntermediateForm\BasicBlockAnalysisValues.cs" />
     <Compile Include="src\IntermediateForm\MethodFlowGraph.cs" />
     <Compile Include="test\Domains\AbstractEvalStackTest.cs" />
   </ItemGroup>

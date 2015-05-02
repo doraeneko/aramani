@@ -13,11 +13,11 @@ namespace DotNetAnalyser.Domains
         where T : IDomainElement<T>
     {
         /// <summary>
-        /// Compute the effect of an instruction <paramref name="instr"/>
+        /// Compute the effect of an instruction <paramref name="instruction"/>
         /// having <paramref name="input"/> as precondition (or postcondition)
         /// </summary>
         /// <param name="inputs"></param>
-       void ComputeEffect(Instruction instruction);
+       void ComputeEffect(Instruction instruction, bool UseElseBranch = false);
        
     }
 

@@ -27,7 +27,9 @@ namespace DotNetAnalyser.Analyses
             }
         }
 
-        public void ComputeEffect(Mono.Cecil.Cil.Instruction instruction)
+        public void ComputeEffect
+            (Mono.Cecil.Cil.Instruction instruction,
+             bool UseElseBranch = false)
         {
             var opCode = instruction.OpCode;
             switch (opCode.Code)

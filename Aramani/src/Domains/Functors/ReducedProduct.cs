@@ -191,7 +191,7 @@ namespace DotNetAnalyser.Domains
             component3.ToTopElement();
         }
 
-        public object Clone()
+        public virtual object Clone()
         {
             return new ReducedProduct<T1, T2, T3>
                 (component1.Clone() as T1,
