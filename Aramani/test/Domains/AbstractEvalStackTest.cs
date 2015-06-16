@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 
 
-namespace DotNetAnalyser.Domains
+namespace Aramani.Domains
 {
 
     [TestFixture]

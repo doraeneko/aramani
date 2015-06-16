@@ -55,36 +55,46 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Analyses\AnalysisForwardProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="src\Domains\Finite\OneNull.cs" />
-    <Compile Include="src\Domains\Functors\ReducedProduct.cs" />
-    <Compile Include="src\Domains\Operational\LocalVariables.cs" />
-    <Compile Include="src\Domains\Operational\MethodFrame.cs" />
-    <Compile Include="src\Domains\Operational\TypeAnalysisMethodFrame.cs" />
-    <Compile Include="src\IntermediateForm\AnalysisForwardProcessor.cs" />
-    <Compile Include="src\IntermediateForm\BasicBlock.cs" />
-    <Compile Include="src\IntermediateForm\BasicBlockAnalysisValues.cs" />
-    <Compile Include="src\IntermediateForm\MethodFlowGraph.cs" />
+    <Compile Include="Domains\Finite\OneNull.cs" />
+    <Compile Include="Domains\Functors\ReducedProduct.cs" />
+    <Compile Include="Domains\Operational\EqualityMethodFrame.cs" />
+    <Compile Include="Domains\Operational\IMethodFrameManipulator.cs" />
+    <Compile Include="Domains\Operational\LocalVariables.cs" />
+    <Compile Include="Domains\Operational\MethodFrame.cs" />
+    <Compile Include="Domains\Operational\MethodFrameDomain.cs" />
+    <Compile Include="Domains\Operational\OneNullMethodFrame.cs" />
+    <Compile Include="Domains\Operational\SimpleStackAliasMethodFrame.cs" />
+    <Compile Include="Helpers\StackHelper.cs" />
     <Compile Include="test\Domains\AbstractEvalStackTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="src\App\*.cs" />
-    <Compile Include="src\Domains\Functors\AbstractEvalStack.cs" />
-    <Compile Include="src\Domains\Functors\AbstractTuple.cs" />
-    <Compile Include="src\Domains\Base\IDomainElement.cs" />
-    <Compile Include="src\Domains\Base\IEffectComputer.cs" />
-    <Compile Include="src\Domains\Operational\MethodSummary.cs" />
-    <Compile Include="src\Domains\Base\ReferenceSet.cs" />
-    <Compile Include="src\Domains\VariableCharacterizationDomain.cs" />
-    <Compile Include="src\Domains\Base\TypeSet.cs" />
-    <Compile Include="src\Analyses\AnalysisIntraAccumulating.cs" />
-    <Compile Include="src\Analyses\LocalCallAnalysis.cs" />
-    <Compile Include="src\Domains\VariableCharacterization.cs" />
-    <Compile Include="src\Analyses\TransitiveCallAnalysis.cs" />
-    <Compile Include="src\Analyses\TypeAnalysis.cs" />
+    <Compile Include="App\Analyser.cs" />
+    <Compile Include="Domains\Functors\AbstractEvalStack.cs" />
+    <Compile Include="Domains\Functors\AbstractTuple.cs" />
+    <Compile Include="Domains\Base\IDomainElement.cs" />
+    <Compile Include="Domains\Base\IEffectComputer.cs" />
+    <Compile Include="Domains\Operational\MethodSummary.cs" />
+    <Compile Include="Domains\Base\ReferenceSet.cs" />
+    <Compile Include="Domains\VariableCharacterizationDomain.cs" />
+    <Compile Include="Domains\Base\TypeSet.cs" />
+    <Compile Include="Analyses\AnalysisIntraAccumulating.cs" />
+    <Compile Include="Analyses\LocalCallAnalysis.cs" />
+    <Compile Include="Domains\VariableCharacterization.cs" />
+    <Compile Include="Analyses\TransitiveCallAnalysis.cs" />
+    <Compile Include="Analyses\TypeAnalysis.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\AramaniBase\AramaniBase.csproj">
+      <Project>{29e68183-7497-44d6-b689-f36e14f7c322}</Project>
+      <Name>AramaniBase</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AramaniIntermediateForm\AramaniIntermediateForm.csproj">
+      <Project>{6cf9b6b9-b418-439e-b3c7-bfed3d5514b7}</Project>
+      <Name>AramaniIntermediateForm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>
       <Name>Mono.Cecil</Name>
