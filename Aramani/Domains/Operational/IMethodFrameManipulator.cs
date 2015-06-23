@@ -134,6 +134,11 @@ namespace Aramani.Domains
         void ComputeComparison
             (Comparison cmp = Comparison.UNSPECIFIED, 
              ComparisonOption option = ComparisonOption.NONE);
+        void BranchOperation
+            (Comparison cmp = Comparison.UNSPECIFIED,
+             bool interpretAsUnsigned = false);
+        void BranchIfNullOnTop();
+        void BranchIfNotNullOnTop();
 
         void Convert
             (TypeDiscriminant targetType = TypeDiscriminant.UNSPECIFIED, 

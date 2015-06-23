@@ -11,9 +11,6 @@ using CODE = Mono.Cecil.Cil.Code;
 namespace Aramani.IntermediateForm
 {
 
-
-
-
     /// <summary>
     /// A control flow graph of a bytecode method.
     /// </summary>

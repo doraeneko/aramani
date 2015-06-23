@@ -336,7 +336,7 @@ namespace Aramani.Domains
                 case Code.Throw:
                     innerValue.Throw();
                     break;
-                case Code.Rethrow;
+                case Code.Rethrow:
                     innerValue.Rethrow();
                     break;
                 case Code.Ldfld:
@@ -582,64 +582,62 @@ namespace Aramani.Domains
 
 
 
-                // ***
-                case Code.Br_S:
-                    break;
+                // Branching
                 case Code.Brfalse_S:
+                case Code.Brfalse:
+                    innerValue.BranchIfNullOnTop();
                     break;
                 case Code.Brtrue_S:
+                case Code.Brtrue:
+                    innerValue.BranchIfNotNullOnTop();
                     break;
+
                 case Code.Beq_S:
+                case Code.Beq:
+                    innerValue.BranchOperation(Comparison.EQ);
                     break;
                 case Code.Bge_S:
+                case Code.Bge:
+                    innerValue.BranchOperation(Comparison.GEQ);
                     break;
                 case Code.Bgt_S:
+                case Code.Bgt:
+                    innerValue.BranchOperation(Comparison.GT);
                     break;
                 case Code.Ble_S:
+                case Code.Ble:
+                    innerValue.BranchOperation(Comparison.LEQ);
                     break;
                 case Code.Blt_S:
+                case Code.Blt:
+                    innerValue.BranchOperation(Comparison.LT);
                     break;
                 case Code.Bne_Un_S:
+                case Code.Bne_Un:
+                    innerValue.BranchOperation(Comparison.NEQ, true);
                     break;
                 case Code.Bge_Un_S:
+                case Code.Bge_Un:
+                    innerValue.BranchOperation(Comparison.GEQ, true);
                     break;
                 case Code.Bgt_Un_S:
+                case Code.Bgt_Un:
+                    innerValue.BranchOperation(Comparison.GT, true);
                     break;
                 case Code.Ble_Un_S:
+                case Code.Ble_Un:
+                    innerValue.BranchOperation(Comparison.LEQ, true);
                     break;
                 case Code.Blt_Un_S:
-                    break;
-                case Code.Br:
-                    break;
-                case Code.Brfalse:
-                    break;
-                case Code.Brtrue:
-                    break;
-                case Code.Beq:
-                    break;
-                case Code.Bge:
-                    break;
-                case Code.Bgt:
-                    break;
-                case Code.Ble:
-                    break;
-                case Code.Blt:
-                    break;
-                case Code.Bne_Un:
-                    break;
-                case Code.Bge_Un:
-                    break;
-                case Code.Bgt_Un:
-                    break;
-                case Code.Ble_Un:
-                    break;
                 case Code.Blt_Un:
+                    innerValue.BranchOperation(Comparison.LT, true);
                     break;
-
-
-                // ***
 
                 // Control flow
+                case Code.Br:
+                    break;
+                case Code.Br_S:
+                    break;
                 case Code.Switch:
                     break;
                 case Code.Endfilter:
