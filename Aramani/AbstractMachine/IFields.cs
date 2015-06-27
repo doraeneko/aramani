@@ -10,6 +10,7 @@ namespace Aramani.AbstractMachine
     public interface IFields<FIELDVALUEDOMAIN, INSTANCEDOMAIN>
     {
 
+        FIELDVALUEDOMAIN this[Mono.Cecil.FieldReference fieldRef] { get; set; }
         void SetStaticField(Mono.Cecil.FieldReference fieldRef, FIELDVALUEDOMAIN newValue);
         FIELDVALUEDOMAIN GetStaticField(Mono.Cecil.FieldReference fieldRef);
 
