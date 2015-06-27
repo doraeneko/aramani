@@ -17,7 +17,7 @@ namespace Aramani.Domains
 
         public virtual void ComputeEffect
             (Instruction instruction, 
-             bool UseElseBranch = false)
+             bool useElseBranch = false)
         {
             switch (instruction.OpCode.Code)
             {
@@ -151,7 +151,6 @@ namespace Aramani.Domains
                 case Code.Pop:
                     innerValue.Pop();
                     break;
-
                 case Code.Ldind_I1:
                     innerValue.LoadIndirect(TypeDiscriminant.I1);
                     break;
@@ -390,7 +389,6 @@ namespace Aramani.Domains
                 case Code.Conv_Ovf_U_Un:
                     innerValue.Convert(TypeDiscriminant.UNSIGNED_NATIVE_INT, true, true);
                     break;
-
                 case Code.Conv_Ovf_I1:
                     innerValue.Convert(TypeDiscriminant.I1, false, true);
                     break;
@@ -553,7 +551,6 @@ namespace Aramani.Domains
                 case Code.Readonly:
                     innerValue.InstructionPrefix(InstructionPrefix.READONLY);
                     break;
-
                 case Code.Cpblk:
                     innerValue.CopyBlock();
                     break;
@@ -563,7 +560,6 @@ namespace Aramani.Domains
                 case Code.Sizeof:
                     innerValue.SizeOf((TypeReference)instruction.Operand);
                     break;
-
                 case Code.Ceq:
                     innerValue.ComputeComparison(Comparison.EQ, ComparisonOption.NONE);
                     break;
@@ -585,71 +581,155 @@ namespace Aramani.Domains
                 // Branching
                 case Code.Brfalse_S:
                 case Code.Brfalse:
-                    innerValue.BranchIfNullOnTop();
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchIfNotNullOnTop();
+                    }
+                    else
+                    {
+                        innerValue.BranchIfNullOnTop();
+                    }
                     break;
                 case Code.Brtrue_S:
                 case Code.Brtrue:
-                    innerValue.BranchIfNotNullOnTop();
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchIfNullOnTop();
+                    }
+                    else
+                    {
+                        innerValue.BranchIfNotNullOnTop();
+                    }
                     break;
-
                 case Code.Beq_S:
                 case Code.Beq:
-                    innerValue.BranchOperation(Comparison.EQ);
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.NEQ);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.EQ);
+                    }
                     break;
                 case Code.Bge_S:
                 case Code.Bge:
-                    innerValue.BranchOperation(Comparison.GEQ);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.LT);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.GEQ);
+                    }
                     break;
                 case Code.Bgt_S:
                 case Code.Bgt:
-                    innerValue.BranchOperation(Comparison.GT);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.LEQ);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.GT);
+                    }
                     break;
                 case Code.Ble_S:
                 case Code.Ble:
-                    innerValue.BranchOperation(Comparison.LEQ);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.GT);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.LEQ);
+                    }
                     break;
                 case Code.Blt_S:
                 case Code.Blt:
-                    innerValue.BranchOperation(Comparison.LT);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.GEQ);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.LT);
+                    }
                     break;
                 case Code.Bne_Un_S:
                 case Code.Bne_Un:
-                    innerValue.BranchOperation(Comparison.NEQ, true);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.GT, true);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.NEQ, true);
+                    }
                     break;
                 case Code.Bge_Un_S:
                 case Code.Bge_Un:
-                    innerValue.BranchOperation(Comparison.GEQ, true);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.LT, true);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.GEQ, true);
+                    }
                     break;
                 case Code.Bgt_Un_S:
                 case Code.Bgt_Un:
-                    innerValue.BranchOperation(Comparison.GT, true);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.LEQ, true);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.GT, true);
+                    }
                     break;
                 case Code.Ble_Un_S:
                 case Code.Ble_Un:
-                    innerValue.BranchOperation(Comparison.LEQ, true);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.GT, true);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.LEQ, true);
+                    }
                     break;
                 case Code.Blt_Un_S:
                 case Code.Blt_Un:
-                    innerValue.BranchOperation(Comparison.LT, true);
+                    // TODO: correct?
+                    if (useElseBranch)
+                    {
+                        innerValue.BranchOperation(Comparison.GEQ, true);
+                    }
+                    else
+                    {
+                        innerValue.BranchOperation(Comparison.LT, true);
+                    }
                     break;
 
                 // Control flow
                 case Code.Br:
-                    break;
                 case Code.Br_S:
-                    break;
                 case Code.Switch:
-                    break;
                 case Code.Endfilter:
-                    break;
                 case Code.Jmp:
-                    break;
                 case Code.Ret:
-                    break;
                 case Code.Endfinally:
-                    break;
                 case Code.Leave:
-                    break;
                 case Code.Leave_S:
                     break;
 

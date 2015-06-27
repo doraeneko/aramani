@@ -32,7 +32,6 @@ namespace Aramani.IntermediateForm
             set;
         }
 
-
         public Instruction LastInstruction 
         { 
             get 

@@ -81,7 +81,7 @@ namespace Aramani.Domains
     }
 
 
-    interface IMethodFrameManipulator<T> 
+    public interface IMethodFrameManipulator<T> 
         where T : IDomainElement<T>
     {
 
@@ -134,6 +134,8 @@ namespace Aramani.Domains
         void ComputeComparison
             (Comparison cmp = Comparison.UNSPECIFIED, 
              ComparisonOption option = ComparisonOption.NONE);
+
+
         void BranchOperation
             (Comparison cmp = Comparison.UNSPECIFIED,
              bool interpretAsUnsigned = false);
@@ -154,7 +156,6 @@ namespace Aramani.Domains
         void Call
             (bool isIndirect = false, 
              bool isInstance = true);
-
 
         void LoadFunctionPointer(bool isVirtual = false);
 

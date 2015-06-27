@@ -55,7 +55,13 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractMachine\IAbstractMachine.cs" />
+    <Compile Include="AbstractMachine\ILocalVariables.cs" />
+    <Compile Include="AbstractMachine\IParameters.cs" />
+    <Compile Include="AbstractMachine\IFields.cs" />
     <Compile Include="Analyses\AnalysisForwardProcessor.cs" />
+    <Compile Include="AbstractMachine\IEvalStack.cs" />
+    <Compile Include="ILocalVariables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domains\Finite\OneNull.cs" />
     <Compile Include="Domains\Functors\ReducedProduct.cs" />

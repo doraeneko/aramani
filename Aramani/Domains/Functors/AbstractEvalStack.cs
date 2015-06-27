@@ -17,7 +17,8 @@ namespace Aramani.Domains
     /// for ordinary elements of the tuple domain).
     /// </summary>
     /// <typeparam name="C"></typeparam>
-    class AbstractEvalStack<C> : AbstractTuple<C>, IDomainElement<AbstractEvalStack<C>>
+    class AbstractEvalStack<C> : AbstractTuple<C>, IDomainElement<AbstractEvalStack<C>>, 
+        AbstractMachine.IEvalStack<C>
         where C: class, IDomainElement<C>, new()
     {
 

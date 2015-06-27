@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Aramani.Domains
 {
-    interface IDomainElement<in T> : ICloneable
+    public interface IDomainElement<in T> : ICloneable
     {
 
         #region /* Properties */
