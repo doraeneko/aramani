@@ -10,7 +10,7 @@ namespace Aramani.Domains
 {
 
     class MethodFrameDomain<T> : IEffectComputer<MethodFrameDomain<T>>
-        where T : IMethodFrameManipulator<T>, IDomainElement<T>
+        where T : IMethodFrameManipulator, IDomainElement<T>
     {
 
         T innerValue;
@@ -426,7 +426,7 @@ namespace Aramani.Domains
                     innerValue.NewArray((TypeReference)instruction.Operand);
                     break;
                 case Code.Ldlen:
-                    innerValue.NewArray((TypeReference)instruction.Operand);
+                    innerValue.LoadArrayLength();
                     break;
                 case Code.Ldelema:
                     innerValue.LoadArrayElementIndirect((TypeReference)instruction.Operand);
@@ -519,13 +519,13 @@ namespace Aramani.Domains
                     innerValue.LoadFunctionPointer(true);
                     break;
                 case Code.Callvirt:
-                    innerValue.Call(false, true);
+                    innerValue.Call((IMethodSignature)instruction.Operand, false);
                     break;
                 case Code.Call:
-                    innerValue.Call(false, false);
+                    innerValue.Call((IMethodSignature)instruction.Operand, false);
                     break;
                 case Code.Calli:
-                    innerValue.Call(true);
+                    innerValue.Call((IMethodSignature)instruction.Operand, true);
                     break;
 
                 case Code.Refanyval:

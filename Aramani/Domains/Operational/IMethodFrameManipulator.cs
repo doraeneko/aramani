@@ -81,13 +81,12 @@ namespace Aramani.Domains
     }
 
 
-    public interface IMethodFrameManipulator<T> 
-        where T : IDomainElement<T>
+    public interface IMethodFrameManipulator
     {
 
-        void LoadArgument(int index, bool loadItsAddress = true);
-        void LoadLocalVariable(int index, bool loadItsAddress = true);
-        void LoadField(FieldReference field, bool loadItsAddress = true);
+        void LoadArgument(int index, bool loadItsAddress = false);
+        void LoadLocalVariable(int index, bool loadItsAddress = false);
+        void LoadField(FieldReference field, bool loadItsAddress = false);
         void LoadIndirect(TypeDiscriminant type = TypeDiscriminant.UNSPECIFIED);
         void LoadConstant(int value);
         void LoadConstant(long value);
@@ -117,8 +116,6 @@ namespace Aramani.Domains
         void StoreArrayElement
             (TypeDiscriminant type = TypeDiscriminant.UNSPECIFIED);
         void StoreArrayElement
-            (TypeReference typeRef);
-        void StoreArrayElementIndirect
             (TypeReference typeRef);
 
         void StoreArgument(int index);
@@ -154,8 +151,9 @@ namespace Aramani.Domains
         void InstructionPrefix(InstructionPrefix prefix, TypeReference parameter = null);
 
         void Call
-            (bool isIndirect = false, 
-             bool isInstance = true);
+            (IMethodSignature callSiteOrMethodRef,
+             bool isIndirect = false);
+
 
         void LoadFunctionPointer(bool isVirtual = false);
 

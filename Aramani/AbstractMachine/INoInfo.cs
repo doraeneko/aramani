@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Aramani
+namespace Aramani.AbstractMachine
 {
-    class ILocalVariables
+
+    public interface IToUnknown
     {
+
+        void ToUnknown();
     }
 }

@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Aramani.AbstractMachine
 {
 
-    public interface IParameters<T>
+    public interface IParameters<PARAMETERDOMAIN> : IToUnknown
     {
 
-        void SetParameter(int index, T newValue);
+        void SetParameter(int index, PARAMETERDOMAIN newValue);
 
-        T GetParameter(int index);
+        PARAMETERDOMAIN GetParameter(int index);
 
     }
 }

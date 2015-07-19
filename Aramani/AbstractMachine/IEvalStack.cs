@@ -7,13 +7,16 @@ using System.Threading.Tasks;
 namespace Aramani.AbstractMachine
 {
 
-    public interface IEvalStack<T>
+    public interface IEvalStack<STACKELEMENTDOMAIN> : IToUnknown
     {
-        void Push(T element);
 
-        T Top();
+        void Push(STACKELEMENTDOMAIN element);
 
-        T Pop();
+        void PushUnknownElement();
+
+        STACKELEMENTDOMAIN Top();
+
+        STACKELEMENTDOMAIN Pop();
 
     }
 }

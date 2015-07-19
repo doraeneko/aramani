@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 namespace Aramani.AbstractMachine
 {
 
-    public interface ILocalVariables<T>
+    public interface ILocalVariables<LOCALVARIABLEDOMAIN> : IToUnknown
     {
 
-        T SetLocalVariable(int offset, T newValue);
+        LOCALVARIABLEDOMAIN SetLocalVariable(int offset, LOCALVARIABLEDOMAIN newValue);
 
-        T GetLocalVariable(int offset);
+        LOCALVARIABLEDOMAIN GetLocalVariable(int offset);
          
     }
 }

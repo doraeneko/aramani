@@ -70,20 +70,20 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractMachine\IAbstractMachine.cs" />
+    <Compile Include="AbstractMachine\AbstractMachine.cs" />
+    <Compile Include="AbstractMachine\IHeap.cs" />
     <Compile Include="AbstractMachine\ILocalVariables.cs" />
     <Compile Include="AbstractMachine\IParameters.cs" />
     <Compile Include="AbstractMachine\IFields.cs" />
+    <Compile Include="AbstractMachine\INoInfo.cs" />
     <Compile Include="Analyses\AnalysisForwardProcessor.cs" />
     <Compile Include="AbstractMachine\IEvalStack.cs" />
-    <Compile Include="ILocalVariables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Domains\Finite\OneNull.cs" />
     <Compile Include="Domains\Functors\ReducedProduct.cs" />
     <Compile Include="Domains\Operational\EqualityMethodFrame.cs" />
     <Compile Include="Domains\Operational\IMethodFrameManipulator.cs" />
     <Compile Include="Domains\Operational\LocalVariables.cs" />
-    <Compile Include="Domains\Operational\MethodFrame.cs" />
     <Compile Include="Domains\Operational\MethodFrameDomain.cs" />
     <Compile Include="Domains\Operational\OneNullMethodFrame.cs" />
     <Compile Include="Domains\Operational\SimpleStackAliasMethodFrame.cs" />

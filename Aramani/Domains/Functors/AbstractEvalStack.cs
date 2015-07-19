@@ -43,6 +43,13 @@ namespace Aramani.Domains
             }
         }
 
+        public void PushUnknownElement()
+        {
+            C topElement = new C();
+            topElement.ToTopElement();
+            Push(topElement);
+        }
+
         public C Top()
         {
             return this[0];
@@ -77,6 +84,10 @@ namespace Aramani.Domains
             base.ToTopElement();
         }
 
+        public virtual void ToUnknown()
+        {
+            ToTopElement();
+        }
 
         public void UnionWith(AbstractEvalStack<C> element)
         {

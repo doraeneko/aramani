@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-// TODO 
 
 namespace Aramani
 {
@@ -14,7 +13,7 @@ namespace Aramani
     /// </summary>
     public interface IGraphDisplayable
     {
-
+       
         /// <summary>
         /// Return code fragment in dot format
         /// describing the object.
