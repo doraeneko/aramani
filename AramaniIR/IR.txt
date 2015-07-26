@@ -1,0 +1,29 @@
+﻿
+1) Local variables  {l0, l1, ...}
+2) Parameters       {p0, p1, ...}
+3) Stack variables  {s0, s1, ...}
+
+
+(A) Simple assignments
+
+l = l
+l = p
+l = s
+l = <CLASS::f>
+l = l<.f>
+
+l = l[l]
+
+l = &l
+l = &p
+l = &s
+l = &<CLASS:member>
+l = &(<l.f>)
+
+
+l = l+l | l-l | l*l | l>>l ...
+l = !l  | ~l ...
+
+
+l = new Something(l1, l2, ...)
+l = call(l1, l2, ...)
