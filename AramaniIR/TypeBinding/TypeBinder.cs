@@ -27,8 +27,7 @@ namespace Aramani.IR.TypeBinder
             {
                 bool matches = asGenericInstance.GenericArguments.Count == asGenericInstance.GenericParameters.Count;
                 // add parameters
-                for (int i = 0; i < asGenericInstance.ElementType)
-                
+
             }
 
         }

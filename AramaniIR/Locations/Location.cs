@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using AramaniIR.Variables;
+using Aramani.IR.Variables;
+using Aramani.Base;
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
-    abstract class Location : IOperands
+    abstract class Location : IDescription, IOperands
     {
 
         bool isIndirectAccess;
@@ -13,6 +14,15 @@ namespace AramaniIR.Commands
         { 
             get { return isIndirectAccess; } 
         }
+
+
+        public abstract ICollection<Variable> GetOperands();
+
+        public abstract int OperandCount();
+
+        public abstract bool HasOperands();
+
+        public abstract string Description { get; }
 
     }
 }

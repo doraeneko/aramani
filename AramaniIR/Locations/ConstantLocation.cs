@@ -1,28 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aramani.Base;
 
-using AramaniIR.Variables;
+using Aramani.IR.Variables;
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
     abstract class ConstantLocation<T> : Location
     {
 
         public T Constant { get; set; }
 
-        public virtual ICollection<Variable> GetOperators()
+        public override ICollection<Variable> GetOperands()
         {
             return null;
         }
 
-        public sealed int OperandCount()
+        public override int OperandCount()
         {
             return 0;
         }
 
-        public sealed bool HasOperators()
+        public override bool HasOperands()
         {
             return false;
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return "" + Constant;
+            }
         }
 
     }

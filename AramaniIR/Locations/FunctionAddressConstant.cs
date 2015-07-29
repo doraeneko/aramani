@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aramani.Base;
+using Aramani.IR.Variables;
 
-using AramaniIR.Variables;
-
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
     abstract class FunctionAddressConstant : Location
     {
@@ -16,15 +16,22 @@ namespace AramaniIR.Commands
             return null;
         }
 
-        public sealed int OperandCount()
+        public override int OperandCount()
         {
             return 0;
         }
 
-        public sealed bool HasOperators()
+        public override bool HasOperands()
         {
             return false;
         }
 
+        public override string Description
+        {
+            get
+            {
+                return "&" + Constant;
+            }
+        }
     }
 }

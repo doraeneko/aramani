@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using AramaniIR.Variables;
+using Aramani.IR.Variables;
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
     abstract class New : Command
     {
 
         public StackVariable Target { get; set; }
-       
+
     }
 }

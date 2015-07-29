@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Mono.Collections.Generic;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Aramani.Base;
 
 using CODE = Mono.Cecil.Cil.Code;
 

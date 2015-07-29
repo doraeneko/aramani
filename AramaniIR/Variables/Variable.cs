@@ -1,10 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using Aramani.Base;
 
-
-namespace AramaniIR.Variables
+namespace Aramani.IR.Variables
 {
-    abstract class Variable
+    abstract class Variable : IDescription
     {
+
+        public abstract string Description
+        {
+            get;
+        }
+
     }
 }

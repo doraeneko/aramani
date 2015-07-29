@@ -11,7 +11,7 @@ namespace Aramani.IR.TypeBinder
     public static class TypeBinderHelpers
     {
     
-            List<Mono.Cecil.GenericParameter> GetAllUninstantiatedParameters(this Mono.Cecil.TypeReference typeDef)
+            static List<Mono.Cecil.GenericParameter> GetAllUninstantiatedParameters(this Mono.Cecil.TypeReference typeDef)
             {
                 var result = new List<Mono.Cecil.GenericParameter>();
                 if (typeDef.HasGenericParameters)

@@ -39,8 +39,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicBlocks\BasicBlock.cs" />
+    <Compile Include="BasicBlocks\CallBlock.cs" />
+    <Compile Include="BasicBlocks\ConditionalBlock.cs" />
+    <Compile Include="BasicBlocks\NewObjectBlock.cs" />
+    <Compile Include="BasicBlocks\SimpleSuccessorBlock.cs" />
     <Compile Include="Commands\BinaryOperation.cs" />
     <Compile Include="Commands\New.cs" />
+    <Compile Include="Commands\NewObject.cs" />
     <Compile Include="Commands\Receive.cs" />
     <Compile Include="Commands\Base\Command.cs" />
     <Compile Include="Commands\Base\IOperands.cs" />
@@ -54,11 +60,12 @@
     <Compile Include="Locations\ConstantLocation.cs" />
     <Compile Include="Locations\InstanceFieldLocation.cs" />
     <Compile Include="Locations\VariableLocation.cs" />
-    <Compile Include="IR\TypeBinding\TypeBinder.cs" />
-    <Compile Include="IR\TypeBinding\TypeBinderHelpers.cs" />
+    <Compile Include="TypeBinding\TypeBinder.cs" />
+    <Compile Include="TypeBinding\TypeBinderHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\Set.cs" />
     <Compile Include="Variables\FieldVariable.cs" />
+    <Compile Include="Variables\IndexedVariable.cs" />
     <Compile Include="Variables\LocalVariable.cs" />
     <Compile Include="Variables\ParameterVariable.cs" />
     <Compile Include="Variables\StackVariable.cs" />
@@ -69,6 +76,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\AramaniBase\AramaniBase.csproj">
+      <Project>{29e68183-7497-44d6-b689-f36e14f7c322}</Project>
+      <Name>AramaniBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\cecil\Mono.Cecil.csproj">
       <Project>{d68133bd-1e63-496e-9ede-4fbdbf77b486}</Project>
       <Name>Mono.Cecil</Name>

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AramaniIR.Variables;
+using Aramani.IR.Variables;
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
     class ArrayElementIndex : Location
     {
@@ -13,19 +13,27 @@ namespace AramaniIR.Commands
 
         public StackVariable Index { get; set; }
 
-        public virtual ICollection<Variable> GetOperators()
+        public override ICollection<Variable> GetOperands()
         {
             return new StackVariable[] { ArrayBase, Index };
         }
 
-        public sealed int OperandCount()
+        public override int OperandCount()
         {
             return 2;
         }
 
-        public sealed bool HasOperators()
+        public override bool HasOperands()
         {
             return true;
+        }
+
+        public override string Description
+        {
+            get
+            {
+                return ArrayBase.Description + "[" + Index.Description + "]";
+            }
         }
     }
 }

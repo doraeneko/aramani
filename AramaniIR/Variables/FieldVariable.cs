@@ -4,9 +4,20 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AramaniIR.Variables
+namespace Aramani.IR.Variables
 {
+   
+
     class FieldVariable : Variable
     {
+        Mono.Cecil.FieldReference cilField;
+
+        public override string Description
+        {
+            get
+            {
+                return "[" + cilField + "]";
+            }
+        }
     }
 }

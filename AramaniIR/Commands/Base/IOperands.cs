@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using AramaniIR.Variables;
+using Aramani.IR.Variables;
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
 
     interface IOperands

@@ -4,15 +4,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Aramani.Base;
 
 
-namespace AramaniIR.Commands
+namespace Aramani.IR.Commands
 {
 
-
-
-    abstract class Command 
+    abstract class Command : IDescription
     {
+
+        public string Description
+        {
+            get
+            {
+                return "<Command>";
+            }
+        }
 
     }
 

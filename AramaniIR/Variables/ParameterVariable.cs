@@ -4,9 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AramaniIR.Variables
+namespace Aramani.IR.Variables
 {
-    class ParameterVariable : Variable
+    class ParameterVariable : IndexedVariable
     {
+
+        public override string Description
+        {
+            get
+            {
+                return "parameter[" + ID + "]";
+            }
+        }
     }
 }

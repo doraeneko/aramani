@@ -4,10 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AramaniIR.Variables
+namespace Aramani.IR.Variables
 {
-    class StackVariable : Variable
+    class StackVariable : IndexedVariable
     {
 
+        public override string Description
+        {
+            get
+            {
+                return "stack[" + ID + "]";
+            }
+        }
     }
 }
