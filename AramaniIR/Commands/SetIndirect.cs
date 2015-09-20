@@ -7,12 +7,18 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class SetIndirect : Command
+    public class SetIndirect : Set
     {
 
-        public StackVariable Source { get; set; }
 
-        public StackVariable Target { get; set; }
+        public SetIndirect(StackVariable source, Location target)
+            : base(source, target)
+        { }
 
+
+        public virtual bool IsIndirectAccess
+        {
+            get { return true; }
+        }
     }
 }

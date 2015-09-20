@@ -5,7 +5,7 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class NewObject : New
+    class NewObject : Call
     {
         
     }

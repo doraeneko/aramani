@@ -68,7 +68,7 @@ namespace Aramani.Domains
                     innerValue.StoreLocalVariable(3);
                     break;
                 case Code.Stloc:
-                    innerValue.StoreLocalVariable((int)instruction.Operand);
+                    innerValue.StoreLocalVariable(((VariableDefinition)(instruction.Operand)).Index);
                     break;
                 case Code.Ldarg_S:
                 case Code.Ldarg:

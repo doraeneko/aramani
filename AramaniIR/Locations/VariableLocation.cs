@@ -5,10 +5,15 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class VariableLocation : Location
+    public class VariableLocation : Location
     {
 
         public Variable SourceVariable { get; set; }
+
+        public VariableLocation (Variable sourceVariable)
+        {
+            SourceVariable = sourceVariable;
+        }
 
         public override ICollection<Variable> GetOperands()
         {

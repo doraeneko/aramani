@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 
-namespace Aramani.IR.TypeBinder
+namespace Aramani.IR.Types
 {
 
     public static class TypeBinderHelpers

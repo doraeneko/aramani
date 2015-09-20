@@ -7,24 +7,36 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    abstract class Receive : Command, IOperands
+    public abstract class Receive : Command, IOperands
     {
 
-        public StackVariable Source { get; set; }
+        public virtual bool IsIndirectAccess
+        {
+            get { return false; }
+        }
 
-        public Location Target { get; set; }
+        public StackVariable Target { get; set; }
+
+        public Location Source { get; set; }
+
+        public Receive(StackVariable target, Location source)
+        {
+            Target = target;
+            Source = source;
+        }
 
         public ICollection<Variable> GetOperands()
         {
             var result = new List<Variable>();
-            result.AddRange(Target.GetOperands());
-            result.Add(Source);
+
+            result.Add(Target);
+            result.AddRange(Source.GetOperands());
             return result;
         }
 
         public int OperandCount()
         {
-            return Target.OperandCount() + 1;
+            return Source.OperandCount() + 1;
         }
 
         public bool HasOperands()
@@ -32,13 +44,16 @@ namespace Aramani.IR.Commands
             return true;
         }
 
-        public string Description
+        public override string Description
         {
             get
             {
                 return
-                    Source.Description + " := "
-                    + Target.Description + ";\n";
+                    Target.Description + " := "
+                    + (IsIndirectAccess ? "&( " : "")
+                    + Source.Description 
+                    + (IsIndirectAccess ? " )" : "")
+                    + "\n";
             }
         }
     }

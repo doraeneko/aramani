@@ -6,7 +6,7 @@ using Aramani.Base;
 
 namespace Aramani.IR.Commands
 {
-    abstract class Location : IDescription, IOperands
+    public abstract class Location : IDescription, IOperands
     {
 
         bool isIndirectAccess;
@@ -15,7 +15,10 @@ namespace Aramani.IR.Commands
             get { return isIndirectAccess; } 
         }
 
-
+        public Location(bool isIndirectAccess = false)
+        {
+            this.isIndirectAccess = isIndirectAccess;
+        }
         public abstract ICollection<Variable> GetOperands();
 
         public abstract int OperandCount();

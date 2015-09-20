@@ -8,7 +8,7 @@ namespace Aramani.IR.Variables
 {
    
 
-    class FieldVariable : Variable
+    public class FieldVariable : Variable
     {
         Mono.Cecil.FieldReference cilField;
 
@@ -16,7 +16,7 @@ namespace Aramani.IR.Variables
         {
             get
             {
-                return "[" + cilField + "]";
+                return "." + cilField + "";
             }
         }
     }

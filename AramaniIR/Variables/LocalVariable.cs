@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Aramani.IR.Variables
 {
-    class LocalVariable : IndexedVariable
+    public class LocalVariable : IndexedVariable
     {
 
         public override string Description
         {
             get
             {
-                return "local[" + ID + "]";
+                return "local_" + ID + "";
             }
         }
     }

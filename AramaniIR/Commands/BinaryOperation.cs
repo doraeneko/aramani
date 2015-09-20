@@ -22,6 +22,14 @@ namespace Aramani.IR.Commands
             // TODO
         }
 
+        public BinaryOperation(StackVariable target, StackVariable first, BinaryOp kind, StackVariable second)
+        {
+            Kind = kind;
+            FirstOperand = first;
+            SecondOperand = second;
+            Target = target;
+        }
+
         public BinaryOp Kind { get; set; }
 
         public StackVariable FirstOperand { get; set; }
@@ -30,7 +38,7 @@ namespace Aramani.IR.Commands
 
         public StackVariable Target { get; set; }
 
-        public string Description
+        public override string Description
         {
             get
             {
@@ -40,6 +48,5 @@ namespace Aramani.IR.Commands
                     + SecondOperand.Description + ";\n";
             }
         }
-
     }
 }

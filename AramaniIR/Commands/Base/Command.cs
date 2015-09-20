@@ -10,10 +10,10 @@ using Aramani.Base;
 namespace Aramani.IR.Commands
 {
 
-    abstract class Command : IDescription
+    public abstract class Command : IDescription
     {
 
-        public string Description
+        public virtual string Description
         {
             get
             {
@@ -24,7 +24,11 @@ namespace Aramani.IR.Commands
     }
 
     /*
-
+     x := y / &y 
+     x := op y
+     x := y op z
+     x := new 
+     
      NewArray, NewObject
      CastClass,
      IsInstanceOf,

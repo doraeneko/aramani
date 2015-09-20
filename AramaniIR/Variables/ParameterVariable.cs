@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Aramani.IR.Variables
 {
-    class ParameterVariable : IndexedVariable
+    public class ParameterVariable : IndexedVariable
     {
 
         public override string Description
         {
             get
             {
-                return "parameter[" + ID + "]";
+                return "param_" + ID + "";
             }
         }
     }

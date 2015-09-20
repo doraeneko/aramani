@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Aramani.IR.Variables
 {
-    class StackVariable : IndexedVariable
+    public class StackVariable : IndexedVariable
     {
 
         public override string Description
         {
             get
             {
-                return "stack[" + ID + "]";
+                return "s_" + ID + "";
             }
         }
     }

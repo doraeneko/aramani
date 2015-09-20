@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Mono.Cecil;
 
 
-namespace Aramani.IR.TypeBinder
+namespace Aramani.IR.Types
 {
 
     class TypeBinder

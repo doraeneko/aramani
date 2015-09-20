@@ -108,6 +108,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\Aramani.ILTransformer\Aramani.ILTransformer.csproj">
+      <Project>{a2c50cdf-33c4-4208-b5f7-5f9159a0f933}</Project>
+      <Name>Aramani.ILTransformer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AramaniBase\AramaniBase.csproj">
       <Project>{29e68183-7497-44d6-b689-f36e14f7c322}</Project>
       <Name>AramaniBase</Name>
@@ -115,6 +119,10 @@
     <ProjectReference Include="..\AramaniIntermediateForm\AramaniIntermediateForm.csproj">
       <Project>{6cf9b6b9-b418-439e-b3c7-bfed3d5514b7}</Project>
       <Name>AramaniIntermediateForm</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AramaniIR\AramaniIR.csproj">
+      <Project>{29300d70-aff4-4235-8849-dccb04b16b1e}</Project>
+      <Name>AramaniIR</Name>
     </ProjectReference>
     <ProjectReference Include="..\cecil\Mono.Cecil.csproj">
       <Project>{D68133BD-1E63-496E-9EDE-4FBDBF77B486}</Project>

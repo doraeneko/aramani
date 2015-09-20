@@ -7,8 +7,16 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class ReceiveIndirect : Receive
+    public class ReceiveIndirect : Receive
     {
+        public ReceiveIndirect(StackVariable target, Location source)
+            : base(target, source)
+        {
+        }
 
+        public override bool IsIndirectAccess
+        {
+            get { return true; }
+        }
     }
 }
