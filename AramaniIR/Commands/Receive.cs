@@ -50,9 +50,8 @@ namespace Aramani.IR.Commands
             {
                 return
                     Target.Description + " := "
-                    + (IsIndirectAccess ? "&( " : "")
+                    + (IsIndirectAccess ? "&" : "")
                     + Source.Description 
-                    + (IsIndirectAccess ? " )" : "")
                     + "\n";
             }
         }

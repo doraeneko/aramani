@@ -6,10 +6,15 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    abstract class ConstantLocation<T> : Location
+    public class ConstantLocation<T> : Location
     {
 
         public T Constant { get; set; }
+
+        public ConstantLocation(T constantValue)
+        {
+            Constant = constantValue;
+        }
 
         public override ICollection<Variable> GetOperands()
         {

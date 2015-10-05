@@ -39,6 +39,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicBlocks.cs" />
+    <Compile Include="ILLocationsToIR.cs" />
     <Compile Include="ILTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VariableFactory.cs" />

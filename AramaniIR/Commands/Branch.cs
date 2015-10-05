@@ -8,15 +8,21 @@ using Aramani.IR.Variables;
 namespace Aramani.IR.Commands
 {
 
-    abstract class Branch : Command
+    public abstract class Branch : Command
     {
     }
 
-    class BranchConditional : Branch
+    public class BranchConditional : Branch
     {
-        StackVariable Condition { get; set; }
-        BasicBlocks.BasicBlock TrueTarget { get; set; }
-        BasicBlocks.BasicBlock FalseTarget { get; set; }
+        public StackVariable Condition { get; set; }
+        public BasicBlocks.BasicBlock TrueTarget { get; set; }
+        public BasicBlocks.BasicBlock FalseTarget { get; set; }
+
+        public BranchConditional()
+            : base()
+        {
+
+        }
 
         public override string Description
         {
@@ -30,9 +36,15 @@ namespace Aramani.IR.Commands
         }
     }
 
-    class BranchUnconditional : Branch
+    public class BranchUnconditional : Branch
     {
-        BasicBlocks.BasicBlock Target { get; set; }
+        public BasicBlocks.BasicBlock Target { get; set; }
+
+        public BranchUnconditional() 
+            : base()
+        {
+
+        }
 
         public override string Description
         {
