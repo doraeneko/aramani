@@ -125,6 +125,17 @@ namespace Aramani.ILTransformer
             ILToIr.Add(instruction, command);
         }
 
+        private void LoadIndirect(Mono.Cecil.Cil.Instruction instruction, object type)
+        {
+            var stackVar1 = variables.PopVariable();
+            var target = new VariableLocation(variables.PushFreshVariable());
+            var command = new ReceiveIndirect(stackVar1, target);
+            CommandPair pair = new CommandPair(command, instruction);
+            Console.Write(command.Description);
+            ILToIr.Add(instruction, command);
+        }
+
+
         public void TransformMethod(Mono.Cecil.MethodDefinition method)
         {
             variables = new VariableFactory();
@@ -285,6 +296,35 @@ namespace Aramani.ILTransformer
                         BranchUnconditionally(instruction);
                         break;
 
+                        //////
+                    case Mono.Cecil.Cil.Code.Ldind_I1:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_U1:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_I2:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_U2:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_I4:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_U4:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_I8:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_I:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_R4:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_R8:
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldind_Ref:
+                        break;
+
+
+
+
+
+
                     case Mono.Cecil.Cil.Code.Jmp:
                         break;
                     case Mono.Cecil.Cil.Code.Call:
@@ -343,28 +383,6 @@ namespace Aramani.ILTransformer
                     case Mono.Cecil.Cil.Code.Blt_Un:
                         break;
                     case Mono.Cecil.Cil.Code.Switch:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_I1:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_U1:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_I2:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_U2:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_I4:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_U4:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_I8:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_I:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_R4:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_R8:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ldind_Ref:
                         break;
                     case Mono.Cecil.Cil.Code.Stind_Ref:
                         break;
