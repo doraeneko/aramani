@@ -28,8 +28,8 @@ namespace Aramani.IR.Tests
 
             BasicBlocks.BasicBlock succ = new BasicBlocks.BasicBlock();
             var c1 = new BinaryOperation(s1, s2, BinaryOperation.BinaryOp.ADD, s3);
-            var c2 = new ReceiveDirect(s3, ai1);
-            var c3 = new ReceiveIndirect(s3, ai1);
+            var c2 = new Receive(s3, ai1);
+            var c3 = new Receive(s3, ai1);
 
 
             succ.Code.Add(c1);

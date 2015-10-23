@@ -7,13 +7,8 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    public abstract class Receive : Command, IOperands
+    public class Receive : Command, IOperands
     {
-
-        public virtual bool IsIndirectAccess
-        {
-            get { return false; }
-        }
 
         public StackVariable Target { get; set; }
 
@@ -50,7 +45,6 @@ namespace Aramani.IR.Commands
             {
                 return
                     Target.Description + " := "
-                    + (IsIndirectAccess ? "&" : "")
                     + Source.Description 
                     + "\n";
             }

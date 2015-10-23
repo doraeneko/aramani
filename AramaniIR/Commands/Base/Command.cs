@@ -42,6 +42,7 @@ namespace Aramani.IR.Commands
      InitBlk?
      Box
      Unbox
+     NOP
      
      Conditions for jumps
      */

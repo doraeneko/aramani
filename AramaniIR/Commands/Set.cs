@@ -24,17 +24,12 @@ namespace Aramani.IR.Commands
             get
             {
                 return
-                    (IsIndirectAccess ? "*" : "")
-                    + Target.Description + " := "
+                    Target.Description + " := "
                     + Source.Description
                     + "\n";
             }
         }
 
-        public virtual bool IsIndirectAccess
-        {
-            get { return false; }
-        }
 
     }
 }

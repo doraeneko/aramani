@@ -7,16 +7,24 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    public class ReceiveIndirect : Receive
+
+
+    public class Nop : Command
     {
-        public ReceiveIndirect(StackVariable target, Location source)
-            : base(target, source)
+
+
+        public Nop()
+            : base()
         {
         }
 
-        public override bool IsIndirectAccess
+        public override string Description
         {
-            get { return true; }
+            get
+            {
+                return
+                    "nop\n";
+            }
         }
     }
 }

@@ -9,16 +9,10 @@ namespace Aramani.IR.Commands
     public abstract class Location : IDescription, IOperands
     {
 
-        bool isIndirectAccess;
-        public bool IsIndirectAccess 
-        { 
-            get { return isIndirectAccess; } 
+        public Location()
+        {
         }
 
-        public Location(bool isIndirectAccess = false)
-        {
-            this.isIndirectAccess = isIndirectAccess;
-        }
         public abstract ICollection<Variable> GetOperands();
 
         public abstract int OperandCount();

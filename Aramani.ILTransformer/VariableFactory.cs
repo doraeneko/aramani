@@ -64,18 +64,21 @@ namespace Aramani.ILTransformer
         public StackVariable PushFreshVariable()
         {
             StackVariable variable;
+#if STACK_REUSE
             if (stackvariablePool.Any())
             {
                 variable = stackvariablePool.Dequeue();
             }
             else
             {
+#endif
                 variable = new StackVariable();
                 variable.ID = variableCounter;
                 variableCounter++;
                 variablePool.Add(variable);
-            }
-
+#if STACK_REUSE
+        }
+#endif
             variableStack.Push(variable);
             return variable;
         }

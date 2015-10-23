@@ -31,110 +31,237 @@ namespace Aramani.ILTransformer
             }
         }
 
-        private List<CommandPair> commandList;
+        private List<Command> commandList;
         private VariableFactory variables;
         private ILLocationsToIR ILToIr;
         private BasicBlocks basicBlocks;
 
-        private void LoadArg(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command LoadArg(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
-            var target = new VariableLocation(variables.GetParameter(0));
-            var command = new ReceiveDirect(stackVar, target);
+            var target = new VariableLocation(variables.GetParameter(index));
+            var command = new Receive(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void LoadArgAddress(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command LoadArgAddress(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
-            var target = new VariableLocation(variables.GetParameter(0));
-            var command = new ReceiveIndirect(stackVar, target);
+            var target = new AddressOfLocation(new VariableLocation(variables.GetParameter(index)));
+            var command = new Receive(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void StoreToLocal(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command StoreToLocal(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PopVariable();
             var target = new VariableLocation(variables.GetLocalVariable(index));
-            var command = new SetDirect(stackVar, target);
+            var command = new Set(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void LoadLocal(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command LoadLocal(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
             var target = new VariableLocation(variables.GetLocalVariable(index));
-            var command = new ReceiveDirect(stackVar, target);
+            var command = new Receive(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void LoadLocalAddress(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command LoadLocalAddress(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
-            var target = new VariableLocation(variables.GetLocalVariable(0));
-            var command = new ReceiveIndirect(stackVar, target);
+            var target = new AddressOfLocation(new VariableLocation(variables.GetLocalVariable(index)));
+            var command = new Receive(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void LoadConstant<T>(Mono.Cecil.Cil.Instruction instruction, T constant)
+        private Command LoadConstant<T>(Mono.Cecil.Cil.Instruction instruction, T constant)
         {
             var stackVar = variables.PushFreshVariable();
             var constantLocation = new ConstantLocation<T>(constant);
-            var command = new ReceiveDirect(stackVar, constantLocation);
+            var command = new Receive(stackVar, constantLocation);
             CommandPair pair = new CommandPair(command, instruction);
             Console.WriteLine(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void StoreArgument(Mono.Cecil.Cil.Instruction instruction, int index)
+        private Command StoreArgument(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PopVariable();
             var target = new VariableLocation(variables.GetParameter(index));
-            var command = new SetDirect(stackVar, target);
+            var command = new Set(stackVar, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void Duplicate(Mono.Cecil.Cil.Instruction instruction)
+        private Command Duplicate(Mono.Cecil.Cil.Instruction instruction)
         {
             var stackVar1 = variables.TopVariable();
             var stackVar2 = variables.PushFreshVariable();
             var target = new VariableLocation(stackVar2);
-            var command = new SetDirect(stackVar1, target);
+            var command = new Set(stackVar1, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            return command;
         }
 
-        private void BranchUnconditionally(Mono.Cecil.Cil.Instruction instruction)
+        private Command BranchUnconditionally(Mono.Cecil.Cil.Instruction instruction)
         {
             var command = new BranchUnconditional();
-            basicBlocks.AddBasicBlockEntry(instruction, command);   
+            var target = instruction.Operand as Mono.Cecil.Cil.Instruction;
+            if (target == null)
+            {
+                throw new Exception("No target given for branch instruction.");
+            }
+            basicBlocks.AddJumpTarget(command, target);   
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
-        private void LoadIndirect(Mono.Cecil.Cil.Instruction instruction, object type)
+        private Command BranchBinary(Mono.Cecil.Cil.Instruction instruction, BinaryOperation.BinaryOp binaryOp)
         {
             var stackVar1 = variables.PopVariable();
-            var target = new VariableLocation(variables.PushFreshVariable());
-            var command = new ReceiveIndirect(stackVar1, target);
+            var stackVar2 = variables.PopVariable();
+            var resultVar = variables.PushFreshVariable();
+            var command1 = new BinaryOperation(resultVar, stackVar1, binaryOp, stackVar2);
+            ILToIr.Add(instruction, command1);
+            commandList.Add(command1);
+            Console.Write(command1.Description);
+
+            var target = instruction.Operand as Mono.Cecil.Cil.Instruction;
+            if (target == null)
+            {
+                throw new Exception("No target given for branch instruction.");
+            }
+
+            var command2 = new BranchConditional(resultVar);
+            basicBlocks.AddJumpTarget(command2, target);
+            Console.Write(command2.Description);
+            commandList.Add(command2);
+            return command1;
+        }
+
+        private Command ComputeBinary(Mono.Cecil.Cil.Instruction instruction, BinaryOperation.BinaryOp binaryOp)
+        {
+            var stackVar1 = variables.PopVariable();
+            var stackVar2 = variables.PopVariable();
+            var resultVar = variables.PushFreshVariable();
+            var command1 = new BinaryOperation(resultVar, stackVar1, binaryOp, stackVar2);
+            ILToIr.Add(instruction, command1);
+            commandList.Add(command1);
+            Console.Write(command1.Description);
+            return command1;
+        }
+
+
+        private Command BranchUnary(Mono.Cecil.Cil.Instruction instruction, UnaryOperation.UnaryOp unaryOp)
+        {
+            var stackVar1 = variables.PopVariable();
+            var resultVar = variables.PushFreshVariable();
+            var command1 = new UnaryOperation(resultVar, unaryOp, stackVar1);
+            ILToIr.Add(instruction, command1);
+            commandList.Add(command1);
+            Console.Write(command1.Description);
+
+            var target = instruction.Operand as Mono.Cecil.Cil.Instruction;
+            if (target == null)
+            {
+                throw new Exception("No target given for branch instruction.");
+            }
+            var command2 = new BranchConditional(resultVar);
+            basicBlocks.AddJumpTarget(command2, target);
+            Console.Write(command2.Description);
+            commandList.Add(command2);
+            return command1;
+        }
+
+        private Command ComputeUnary(Mono.Cecil.Cil.Instruction instruction, UnaryOperation.UnaryOp unaryOp)
+        {
+            var stackVar1 = variables.PopVariable();
+            var resultVar = variables.PushFreshVariable();
+            var command1 = new UnaryOperation(resultVar, unaryOp, stackVar1);
+            ILToIr.Add(instruction, command1);
+            commandList.Add(command1);
+            Console.Write(command1.Description);
+            return command1;
+        }
+
+
+        private Command LoadIndirect(Mono.Cecil.Cil.Instruction instruction, object type)
+        {
+            var stackVar1 = variables.PopVariable();
+            var stackVar2 = variables.PushFreshVariable();
+            var target = new DerefLocation(new VariableLocation(stackVar1));
+            var command = new Receive(stackVar1, target);
             CommandPair pair = new CommandPair(command, instruction);
             Console.Write(command.Description);
             ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
         }
 
+        private Command StoreIndirect(Mono.Cecil.Cil.Instruction instruction, object type)
+        {
+            var valueVar = variables.PopVariable();
+            var addressVar = variables.PopVariable();
+            var target = new DerefLocation(new VariableLocation(addressVar));
+            var command = new Set(valueVar, target);
+            CommandPair pair = new CommandPair(command, instruction);
+            Console.Write(command.Description);
+            ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
+        }
+
+        private Command Return(Mono.Cecil.Cil.Instruction instruction)
+        {
+            var command = new Return();
+            CommandPair pair = new CommandPair(command, instruction);
+            Console.Write(command.Description);
+            ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
+        }
+
+        private Command PopVariable(Mono.Cecil.Cil.Instruction instruction)
+        {
+            variables.PopVariable();
+            var command = new Nop();
+            CommandPair pair = new CommandPair(command, instruction);
+            Console.Write(command.Description);
+            ILToIr.Add(instruction, command);
+            commandList.Add(command);
+            return command;
+        }
 
         public void TransformMethod(Mono.Cecil.MethodDefinition method)
         {
@@ -142,187 +269,272 @@ namespace Aramani.ILTransformer
 
             ILToIr = new ILLocationsToIR();
             basicBlocks = new BasicBlocks();
+            commandList = new List<Command>();
 
             if (method.Body == null || method.Body.Instructions == null)
             {
                 Console.WriteLine("Warning: No method body in method {0}.", method);
                 return;
             }
+
+            var isSplitPoint = true;
+
             foreach (var instruction in method.Body.Instructions)
             {
+
+                Command command = null;
+                isSplitPoint = isSplitPoint
+                    || (instruction.OpCode.Code >= Mono.Cecil.Cil.Code.Call
+                        && instruction.OpCode.Code >= Mono.Cecil.Cil.Code.Switch)
+                    || (instruction.OpCode.Code == Mono.Cecil.Cil.Code.Newobj)
+                    || (instruction.OpCode.Code == Mono.Cecil.Cil.Code.Throw);
+
                 switch (instruction.OpCode.Code)
                 {
-
+   
                     case Mono.Cecil.Cil.Code.Ldarg_0:
-                        LoadArg(instruction, 0);
+                        command = LoadArg(instruction, 0);
                         break;
                     case Mono.Cecil.Cil.Code.Ldarg_1:
-                        LoadArg(instruction, 1);
+                        command = LoadArg(instruction, 1);
                         break;
                     case Mono.Cecil.Cil.Code.Ldarg_2:
-                        LoadArg(instruction, 2);
+                        command = LoadArg(instruction, 2);
                         break;
                     case Mono.Cecil.Cil.Code.Ldarg_3:
-                        LoadArg(instruction, 3);
+                        command = LoadArg(instruction, 3);
                         break;
                     case Mono.Cecil.Cil.Code.Ldarg:
                     case Mono.Cecil.Cil.Code.Ldarg_S:
-                        LoadArg(instruction,
+                        command = LoadArg(instruction,
                                 ((Mono.Cecil.ParameterDefinition)instruction.Operand).Index);
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldarga:
                     case Mono.Cecil.Cil.Code.Ldarga_S:
-                        LoadArgAddress(instruction,
+                        command = LoadArgAddress(instruction,
                                 ((Mono.Cecil.ParameterDefinition)instruction.Operand).Index);
                        break;
-
                     case Mono.Cecil.Cil.Code.Stloc_0:
-                        StoreToLocal(instruction, 0);
+                        command = StoreToLocal(instruction, 0);
                         break;
                     case Mono.Cecil.Cil.Code.Stloc_1:
-                        StoreToLocal(instruction, 1);
+                        command = StoreToLocal(instruction, 1);
                         break;
                     case Mono.Cecil.Cil.Code.Stloc_2:
-                        StoreToLocal(instruction, 2);
+                        command = StoreToLocal(instruction, 2);
                         break;
                     case Mono.Cecil.Cil.Code.Stloc_3:
-                        StoreToLocal(instruction, 3);
+                        command = StoreToLocal(instruction, 3);
                         break;
                     case Mono.Cecil.Cil.Code.Stloc_S:
                     case Mono.Cecil.Cil.Code.Stloc:
-                        StoreToLocal(instruction, ((Mono.Cecil.Cil.VariableDefinition)instruction.Operand).Index);
+                        command = StoreToLocal(instruction,
+                            ((Mono.Cecil.Cil.VariableDefinition)instruction.Operand).Index);
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldloc_0:
-                        LoadLocal(instruction, 0);
+                        command = LoadLocal(instruction, 0);
                         break;
                     case Mono.Cecil.Cil.Code.Ldloc_1:
-                        LoadLocal(instruction, 1);
+                        command = LoadLocal(instruction, 1);
                         break;
                     case Mono.Cecil.Cil.Code.Ldloc_2:
-                        LoadLocal(instruction, 2);
+                        command = LoadLocal(instruction, 2);
                         break;
                     case Mono.Cecil.Cil.Code.Ldloc_3:
-                        LoadLocal(instruction, 3);
+                        command = LoadLocal(instruction, 3);
                         break;
                     case Mono.Cecil.Cil.Code.Ldloc_S:
                     case Mono.Cecil.Cil.Code.Ldloc:
-                        LoadLocal(instruction,
+                        command = LoadLocal(instruction,
                              ((Mono.Cecil.Cil.VariableDefinition)instruction.Operand).Index);
                         break;
-
-
                     case Mono.Cecil.Cil.Code.Ldloca_S:
                     case Mono.Cecil.Cil.Code.Ldloca:
-                         LoadLocalAddress(instruction,
+                         command = LoadLocalAddress(instruction,
                              ((Mono.Cecil.Cil.VariableDefinition)instruction.Operand).Index);
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldnull:
-                        LoadConstant<object>(instruction, null);
+                        command = LoadConstant<object>(instruction, null);
                         break;
-
                     case Mono.Cecil.Cil.Code.Starg_S:
                     case Mono.Cecil.Cil.Code.Starg:
-                        StoreArgument
+                        command = StoreArgument
                             (instruction,
                              ((Mono.Cecil.ParameterDefinition)instruction.Operand).Index);
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldc_I4_M1:
                         LoadConstant<int>(instruction, -1);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_0:
-                        LoadConstant<int>(instruction, 0);
+                        command = LoadConstant<int>(instruction, 0);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_1:
-                        LoadConstant<int>(instruction, 1);
+                        command = LoadConstant<int>(instruction, 1);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_2:
-                        LoadConstant<int>(instruction, 2);
+                        command = LoadConstant<int>(instruction, 2);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_3:
-                        LoadConstant<int>(instruction, 3);
+                        command = LoadConstant<int>(instruction, 3);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_4:
-                        LoadConstant<int>(instruction, 4);
+                        command = LoadConstant<int>(instruction, 4);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_5:
-                        LoadConstant<int>(instruction, 5);
+                        command = LoadConstant<int>(instruction, 5);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_6:
-                        LoadConstant<int>(instruction, 6);
+                        command = LoadConstant<int>(instruction, 6);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_7:
-                        LoadConstant<int>(instruction, 7);
+                        command = LoadConstant<int>(instruction, 7);
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_8:
-                        LoadConstant<int>(instruction, 8);
+                        command = LoadConstant<int>(instruction, 8);
+                        break;
+                    case Mono.Cecil.Cil.Code.Ldstr:
+                        command = LoadConstant<string>(instruction, (string)(instruction.Operand));
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I4_S:
                     case Mono.Cecil.Cil.Code.Ldc_I4:
                         // ok?
-                        LoadConstant<int>(instruction, (int)(instruction.Operand));
+                        command = LoadConstant<int>(instruction, (int)(instruction.Operand));
                         break;
                     case Mono.Cecil.Cil.Code.Ldc_I8:
-                        LoadConstant<long>(instruction, (long)(instruction.Operand));
+                        command = LoadConstant<long>(instruction, (long)(instruction.Operand));
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldc_R4:
-                        LoadConstant<float>(instruction, (float)(instruction.Operand));
+                        command = LoadConstant<float>(instruction, (float)(instruction.Operand));
                         break;
-
                     case Mono.Cecil.Cil.Code.Ldc_R8:
-                        LoadConstant<double>(instruction, (double)(instruction.Operand));
+                        command = LoadConstant<double>(instruction, (double)(instruction.Operand));
                         break;
                     case Mono.Cecil.Cil.Code.Dup:
-                        Duplicate(instruction);
+                        command = Duplicate(instruction);
                         break;
-
                     case Mono.Cecil.Cil.Code.Pop:
-                        variables.PopVariable();
-                        break;
+                        command = PopVariable(instruction);
 
+                        break;
                     case Mono.Cecil.Cil.Code.Nop:
                         // TODO: Required?
                         break;
                     case Mono.Cecil.Cil.Code.Break:
                         // IGNORE
                         break;
-
                     case Mono.Cecil.Cil.Code.Br:
                     case Mono.Cecil.Cil.Code.Br_S:
-                        BranchUnconditionally(instruction);
+                        command = BranchUnconditionally(instruction);
                         break;
 
-                        //////
+                    case Mono.Cecil.Cil.Code.Stind_Ref:
+                    case Mono.Cecil.Cil.Code.Stind_I1:
+                    case Mono.Cecil.Cil.Code.Stind_I2:
+                    case Mono.Cecil.Cil.Code.Stind_I4:
+                    case Mono.Cecil.Cil.Code.Stind_I8:
+                    case Mono.Cecil.Cil.Code.Stind_R4:
+                    case Mono.Cecil.Cil.Code.Stind_R8:
+                        command = StoreIndirect(instruction, null);
+                        break;
+
                     case Mono.Cecil.Cil.Code.Ldind_I1:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_U1:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_I2:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_U2:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_I4:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_U4:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_I8:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_I:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_R4:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_R8:
-                        break;
                     case Mono.Cecil.Cil.Code.Ldind_Ref:
+                        command = LoadIndirect(instruction, null);
                         break;
 
 
+                    case Mono.Cecil.Cil.Code.Brfalse_S:
+                    case Mono.Cecil.Cil.Code.Brfalse:
+                        command = BranchUnary(instruction, UnaryOperation.UnaryOp.NEG);
+                        break;
+                    case Mono.Cecil.Cil.Code.Brtrue_S:
+                    case Mono.Cecil.Cil.Code.Brtrue:
+                        command = BranchUnary(instruction, UnaryOperation.UnaryOp.ID);
+                        break;
 
 
+                    case Mono.Cecil.Cil.Code.Beq_S:
+                    case Mono.Cecil.Cil.Code.Beq:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.EQ);
+                        break;
+
+                    // TODO: UNSIGNED VERSIONS !!!
+
+                    case Mono.Cecil.Cil.Code.Bge_S:
+                    case Mono.Cecil.Cil.Code.Bge:
+                    case Mono.Cecil.Cil.Code.Bge_Un_S:
+                    case Mono.Cecil.Cil.Code.Bge_Un:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.GEQ);
+                        break;
+
+                    case Mono.Cecil.Cil.Code.Bgt_S:
+                    case Mono.Cecil.Cil.Code.Bgt:
+                    case Mono.Cecil.Cil.Code.Bgt_Un_S:
+                    case Mono.Cecil.Cil.Code.Bgt_Un:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.GE);
+                        break;
+
+                    case Mono.Cecil.Cil.Code.Ble_S:
+                    case Mono.Cecil.Cil.Code.Ble:
+                    case Mono.Cecil.Cil.Code.Ble_Un_S:
+                    case Mono.Cecil.Cil.Code.Ble_Un:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.LEQ);
+                        break;
+
+                    case Mono.Cecil.Cil.Code.Blt_S:
+                    case Mono.Cecil.Cil.Code.Blt:
+                    case Mono.Cecil.Cil.Code.Blt_Un_S:
+                    case Mono.Cecil.Cil.Code.Blt_Un:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.LE);
+                        break;
+
+
+                    case Mono.Cecil.Cil.Code.Bne_Un_S:
+                    case Mono.Cecil.Cil.Code.Bne_Un:
+                        command = BranchBinary(instruction, BinaryOperation.BinaryOp.NEQ);
+                        break;
+
+                    case Mono.Cecil.Cil.Code.Add:
+                    case Mono.Cecil.Cil.Code.Sub:
+                    case Mono.Cecil.Cil.Code.Mul:
+                    case Mono.Cecil.Cil.Code.Div:
+                    case Mono.Cecil.Cil.Code.Div_Un:
+                    case Mono.Cecil.Cil.Code.Rem:
+                    case Mono.Cecil.Cil.Code.Rem_Un:
+                    case Mono.Cecil.Cil.Code.And:
+                    case Mono.Cecil.Cil.Code.Or:
+                    case Mono.Cecil.Cil.Code.Xor:
+                    case Mono.Cecil.Cil.Code.Shl:
+                    case Mono.Cecil.Cil.Code.Shr:
+                    case Mono.Cecil.Cil.Code.Shr_Un:
+                    case Mono.Cecil.Cil.Code.Add_Ovf:
+                    case Mono.Cecil.Cil.Code.Add_Ovf_Un:
+                    case Mono.Cecil.Cil.Code.Mul_Ovf:
+                    case Mono.Cecil.Cil.Code.Mul_Ovf_Un:
+                    case Mono.Cecil.Cil.Code.Sub_Ovf:
+                    case Mono.Cecil.Cil.Code.Sub_Ovf_Un:
+                    case Mono.Cecil.Cil.Code.Ceq:
+                    case Mono.Cecil.Cil.Code.Clt:
+                    case Mono.Cecil.Cil.Code.Clt_Un:
+                        command = ComputeBinary(instruction, BinaryOperation.BinaryOp.UNKNOWN);
+                        break;
+                    case Mono.Cecil.Cil.Code.Cgt:
+                    case Mono.Cecil.Cil.Code.Cgt_Un:
+                        command = ComputeBinary(instruction, BinaryOperation.BinaryOp.GE);
+                        break;
+                    case Mono.Cecil.Cil.Code.Neg:
+                    case Mono.Cecil.Cil.Code.Not:
+                        command = ComputeUnary(instruction, UnaryOperation.UnaryOp.UNKNOWN);
+                        break;
 
 
                     case Mono.Cecil.Cil.Code.Jmp:
@@ -332,102 +544,14 @@ namespace Aramani.ILTransformer
                     case Mono.Cecil.Cil.Code.Calli:
                         break;
                     case Mono.Cecil.Cil.Code.Ret:
-                        break;
-                    case Mono.Cecil.Cil.Code.Brfalse_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Brtrue_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Beq_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bge_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bgt_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ble_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Blt_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bne_Un_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bge_Un_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bgt_Un_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ble_Un_S:
-                        break;
-                    case Mono.Cecil.Cil.Code.Blt_Un_S:
+                        command = Return(instruction);
                         break;
 
-                    case Mono.Cecil.Cil.Code.Brfalse:
-                        break;
-                    case Mono.Cecil.Cil.Code.Brtrue:
-                        break;
-                    case Mono.Cecil.Cil.Code.Beq:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bge:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bgt:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ble:
-                        break;
-                    case Mono.Cecil.Cil.Code.Blt:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bne_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bge_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Bgt_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Ble_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Blt_Un:
-                        break;
+
                     case Mono.Cecil.Cil.Code.Switch:
                         break;
-                    case Mono.Cecil.Cil.Code.Stind_Ref:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_I1:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_I2:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_I4:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_I8:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_R4:
-                        break;
-                    case Mono.Cecil.Cil.Code.Stind_R8:
-                        break;
-                    case Mono.Cecil.Cil.Code.Add:
-                        break;
-                    case Mono.Cecil.Cil.Code.Sub:
-                        break;
-                    case Mono.Cecil.Cil.Code.Mul:
-                        break;
-                    case Mono.Cecil.Cil.Code.Div:
-                        break;
-                    case Mono.Cecil.Cil.Code.Div_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Rem:
-                        break;
-                    case Mono.Cecil.Cil.Code.Rem_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.And:
-                        break;
-                    case Mono.Cecil.Cil.Code.Or:
-                        break;
-                    case Mono.Cecil.Cil.Code.Xor:
-                        break;
-                    case Mono.Cecil.Cil.Code.Shl:
-                        break;
-                    case Mono.Cecil.Cil.Code.Shr:
-                        break;
-                    case Mono.Cecil.Cil.Code.Shr_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Neg:
-                        break;
-                    case Mono.Cecil.Cil.Code.Not:
-                        break;
+
+
                     case Mono.Cecil.Cil.Code.Conv_I1:
                         break;
                     case Mono.Cecil.Cil.Code.Conv_I2:
@@ -450,8 +574,7 @@ namespace Aramani.ILTransformer
                         break;
                     case Mono.Cecil.Cil.Code.Ldobj:
                         break;
-                    case Mono.Cecil.Cil.Code.Ldstr:
-                        break;
+
                     case Mono.Cecil.Cil.Code.Newobj:
                         break;
                     case Mono.Cecil.Cil.Code.Castclass:
@@ -584,18 +707,7 @@ namespace Aramani.ILTransformer
                         break;
                     case Mono.Cecil.Cil.Code.Conv_Ovf_U:
                         break;
-                    case Mono.Cecil.Cil.Code.Add_Ovf:
-                        break;
-                    case Mono.Cecil.Cil.Code.Add_Ovf_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Mul_Ovf:
-                        break;
-                    case Mono.Cecil.Cil.Code.Mul_Ovf_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Sub_Ovf:
-                        break;
-                    case Mono.Cecil.Cil.Code.Sub_Ovf_Un:
-                        break;
+
                     case Mono.Cecil.Cil.Code.Endfinally:
                         break;
                     case Mono.Cecil.Cil.Code.Leave:
@@ -608,24 +720,11 @@ namespace Aramani.ILTransformer
                         break;
                     case Mono.Cecil.Cil.Code.Arglist:
                         break;
-                    case Mono.Cecil.Cil.Code.Ceq:
-                        break;
-                    case Mono.Cecil.Cil.Code.Cgt:
-                        break;
-                    case Mono.Cecil.Cil.Code.Cgt_Un:
-                        break;
-                    case Mono.Cecil.Cil.Code.Clt:
-                        break;
-                    case Mono.Cecil.Cil.Code.Clt_Un:
-                        break;
+
                     case Mono.Cecil.Cil.Code.Ldftn:
                         break;
                     case Mono.Cecil.Cil.Code.Ldvirtftn:
                         break;
-
-
-
-
                     case Mono.Cecil.Cil.Code.Localloc:
                         break;
                     case Mono.Cecil.Cil.Code.Endfilter:
@@ -657,8 +756,20 @@ namespace Aramani.ILTransformer
                     default:
                         break;
                 }
+
+                if (isSplitPoint)
+                {
+                    basicBlocks.AddBasicBlockEntry(instruction);
+                }
+                isSplitPoint = false;
+
             }
 
+            basicBlocks.ComputeBasicBlocks(ILToIr);
+            foreach (var command in commandList)
+            {
+                Console.WriteLine(command.GetHashCode() + ": " + command.Description);
+            }
         }
 
 

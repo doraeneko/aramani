@@ -10,48 +10,46 @@ namespace Aramani.IR.Commands
 
     public abstract class Branch : Command
     {
+        public Command Target { get; set; }
     }
 
     public class BranchConditional : Branch
     {
         public StackVariable Condition { get; set; }
-        public BasicBlocks.BasicBlock TrueTarget { get; set; }
-        public BasicBlocks.BasicBlock FalseTarget { get; set; }
 
-        public BranchConditional()
+        public BranchConditional(StackVariable condition)
             : base()
         {
-
+            Condition = condition;
         }
 
         public override string Description
         {
             get
             {
+                var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
                 return
                     "if " + Condition.Description 
-                    + " then goto " + TrueTarget.Description 
-                    + " else goto " + FalseTarget.Description + "\n";
+                    + " then goto " + target + "\n";
             }
         }
     }
 
     public class BranchUnconditional : Branch
     {
-        public BasicBlocks.BasicBlock Target { get; set; }
 
         public BranchUnconditional() 
             : base()
         {
-
         }
 
         public override string Description
         {
             get
             {
+                var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
                 return
-                    "goto " + Target.Description + "\n";
+                    "goto " + target + "\n";
             }
         }
     }

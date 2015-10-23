@@ -7,11 +7,12 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class BinaryOperation : Command
+    public class BinaryOperation : Command
     {
 
         public enum BinaryOp
         {
+            UNKNOWN,
             ADD,
             DIV,
             REM,
@@ -19,6 +20,12 @@ namespace Aramani.IR.Commands
             MUL,
             SHL,
             SHR,
+            EQ,
+            NEQ,
+            LEQ,
+            LE,
+            GEQ,
+            GE
             // TODO
         }
 
