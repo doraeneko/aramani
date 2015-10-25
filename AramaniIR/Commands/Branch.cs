@@ -30,7 +30,7 @@ namespace Aramani.IR.Commands
                 var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
                 return
                     "if " + Condition.Description 
-                    + " then goto " + target + "\n";
+                    + " then goto " + target;
             }
         }
     }
@@ -49,7 +49,7 @@ namespace Aramani.IR.Commands
             {
                 var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
                 return
-                    "goto " + target + "\n";
+                    "goto " + target;
             }
         }
     }

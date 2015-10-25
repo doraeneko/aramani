@@ -419,7 +419,7 @@ namespace Mono.Cecil.Cil {
 			}
 		}
 
-		static void ComputeStackDelta (Instruction instruction, ref int stack_size)
+		public static void ComputeStackDelta (Instruction instruction, ref int stack_size)
 		{
 			switch (instruction.opcode.FlowControl) {
 			case FlowControl.Call: {

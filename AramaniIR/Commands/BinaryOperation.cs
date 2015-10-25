@@ -52,7 +52,7 @@ namespace Aramani.IR.Commands
                 return 
                     Target.Description + " := " 
                     + FirstOperand.Description + " " + Kind + " "
-                    + SecondOperand.Description + ";\n";
+                    + SecondOperand.Description;
             }
         }
     }

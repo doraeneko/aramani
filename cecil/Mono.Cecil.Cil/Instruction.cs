@@ -317,5 +317,16 @@ namespace Mono.Cecil.Cil {
 
 			return new Instruction (opcode, parameter);
 		}
+
+        public int StackDelta
+        {
+            get
+            {
+                int result = 0;
+                CodeWriter.ComputeStackDelta(this, ref result);
+                return result;
+            }
+
+        }
 	}
 }

@@ -23,7 +23,7 @@ namespace Aramani.IR.Commands
             get
             {
                 return
-                    "nop\n";
+                    "nop";
             }
         }
     }

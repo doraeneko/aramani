@@ -46,6 +46,7 @@
     <Compile Include="Commands\BinaryOperation.cs" />
     <Compile Include="Commands\Branch.cs" />
     <Compile Include="Commands\Call.cs" />
+    <Compile Include="Commands\Convert.cs" />
     <Compile Include="Commands\New.cs" />
     <Compile Include="Commands\NewObject.cs" />
     <Compile Include="Commands\Nop.cs" />

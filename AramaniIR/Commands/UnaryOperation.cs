@@ -7,9 +7,10 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    public class UnaryOperation : Command
-    {
 
+
+    public abstract class UnaryOperation : Command
+    {
         public enum UnaryOp
         {
             UNKNOWN,
@@ -18,6 +19,18 @@ namespace Aramani.IR.Commands
             NOT,
             ISNULL,
             ISNOTNULL,
+            SIZEOF,
+            LOADLEN,
+            THROW,
+            LOCALLOC,
+            CKFINITE,
+            INITOBJ,
+            BOX, 
+            UNBOX, 
+            CASTCLASS,
+            ISINST,
+            NEWARR,
+            UNBOX_ANY 
             // TODO
         }
 
@@ -41,9 +54,38 @@ namespace Aramani.IR.Commands
                 return
                     Target.Description + " := "
                     + Kind + " " 
-                    + Operand.Description + ";\n";
+                    + Operand.Description + "";
             }
         }
-
     }
+
+    public class UntypedUnaryOperation : UnaryOperation
+    {
+
+        public UntypedUnaryOperation(StackVariable target, UnaryOp kind, StackVariable operand)
+            : base(target, kind, operand)
+        {
+        }
+    }
+
+    public class TypedUnaryOperation : UnaryOperation
+    {
+        Aramani.IR.Types.GroundType TypeInfo { get; set; }
+
+        public TypedUnaryOperation(StackVariable target, UnaryOp kind, StackVariable operand, Aramani.IR.Types.GroundType typeInfo)
+            : base(target, kind, operand)
+        {
+            TypeInfo = typeInfo;
+        }
+        public override string Description
+        {
+            get
+            {
+                var typeDescr = (TypeInfo == null) ? "<unknown type>" : TypeInfo.Description;
+                return
+                    base.Description + " [" + typeDescr + "]";
+            }
+        }
+    }
+
 }

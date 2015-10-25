@@ -10,13 +10,18 @@ namespace Aramani.IR.Variables
 
     public class FieldVariable : Variable
     {
-        Mono.Cecil.FieldReference cilField;
+        Mono.Cecil.FieldReference CilField;
+
+        public FieldVariable(Mono.Cecil.FieldReference cilField)
+        {
+            CilField = cilField;
+        }
 
         public override string Description
         {
             get
             {
-                return "." + cilField + "";
+                return "(" + CilField.FullName + ")";
             }
         }
     }

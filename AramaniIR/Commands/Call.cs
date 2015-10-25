@@ -9,18 +9,31 @@ using Aramani.IR.Routines;
 
 namespace Aramani.IR.Commands
 {
-    class Call : Command
+    public class Call : Command
     {
-        public StackVariable ReturnLocation;
+        public StackVariable ReturnVariable;
         public ICollection<StackVariable> Arguments; // inclusive this for instance calls
         public Routine Callee;
+        public bool IsVirtual { get; set; }
+
+        public Call(Routine routine, ICollection<StackVariable> arguments, StackVariable returnVariable, bool isVirtual)
+        {
+            Callee = routine;
+            Arguments = arguments;
+            ReturnVariable = returnVariable;
+            IsVirtual = isVirtual;
+        }
 
         public override string Description
         {
             get
             {
-                var result = ReturnLocation.Description + " := "
-                             + Callee.Description + "(";
+                var result = "";
+                if (ReturnVariable != null)
+                {
+                    result = ReturnVariable.Description + " := ";
+                }
+                result += Callee.Description + "(";
                 if (Arguments != null)
                 {
                     bool firstArgument = true;
@@ -35,7 +48,7 @@ namespace Aramani.IR.Commands
                     }
                     result = result.Trim();
                 }
-                result += ")\n";
+                result += ")";
                 return result;
             }
         }

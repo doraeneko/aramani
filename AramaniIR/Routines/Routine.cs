@@ -7,18 +7,23 @@ using Aramani.Base;
 
 namespace Aramani.IR.Routines
 {
-    class Routine : IDescription
+    public class Routine : IDescription
     {
         TypeBinder typeClosure;
         Mono.Cecil.MethodDefinition ByteCodeDefinition { get; set; }
         List<BasicBlocks.BasicBlock> Blocks { get; set; }
+
+        public Routine(Mono.Cecil.MethodDefinition bytecodeMethod)
+        {
+            ByteCodeDefinition = bytecodeMethod;
+        }
 
         public virtual string Description
         {
             get
             {
                 // TODO
-                return ByteCodeDefinition.Name;
+                return ByteCodeDefinition.FullName;
             }
         }
     }

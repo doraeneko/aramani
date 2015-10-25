@@ -6,9 +6,21 @@ using System.Threading.Tasks;
 
 namespace Aramani.IR.Types
 {
-    public class GroundType
+    public class GroundType : Aramani.Base.IDescription
     {
-        Mono.Cecil.TypeReference dotnetType;
+        Mono.Cecil.TypeReference DotnetType;
 
+        public GroundType(Mono.Cecil.TypeReference dotnetType)
+        {
+            DotnetType = dotnetType;
+        }
+
+        public string Description
+        {
+            get
+            {
+                return DotnetType.FullName;
+            }
+        }
     }
 }

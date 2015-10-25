@@ -7,11 +7,17 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class ArrayElementIndex : Location
+    public class ArrayElementLocation : Location
     {
         public StackVariable ArrayBase { get; set; }
 
         public StackVariable Index { get; set; }
+
+        public ArrayElementLocation(StackVariable arrayBase, StackVariable index)
+        {
+            ArrayBase = arrayBase;
+            Index = index;
+        }
 
         public override ICollection<Variable> GetOperands()
         {

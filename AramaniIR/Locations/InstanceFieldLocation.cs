@@ -5,12 +5,18 @@ using Aramani.IR.Variables;
 
 namespace Aramani.IR.Commands
 {
-    class InstanceFieldLocation : Location
+    public class InstanceFieldLocation : Location
     {
 
         public StackVariable Instance { get; set; }
 
         public FieldVariable Field { get; set; }
+
+        public InstanceFieldLocation(StackVariable instance, FieldVariable field)
+        {
+            Instance = instance;
+            Field = field;
+        }
 
         public override ICollection<Variable> GetOperands()
         {

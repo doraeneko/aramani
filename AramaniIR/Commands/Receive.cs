@@ -45,8 +45,7 @@ namespace Aramani.IR.Commands
             {
                 return
                     Target.Description + " := "
-                    + Source.Description 
-                    + "\n";
+                    + Source.Description;
             }
         }
     }

@@ -22,20 +22,20 @@ namespace Aramani.IR.Tests
             StackVariable s3 = new StackVariable();
             s3.ID = 2;
 
-            ArrayElementIndex ai1 = new ArrayElementIndex();
-            ai1.ArrayBase = s2;
-            ai1.Index = s3;
+            //ArrayElementLocation ai1 = new ArrayElementLocation();
+            //ai1.ArrayBase = s2;
+            //ai1.Index = s3;
 
-            BasicBlocks.BasicBlock succ = new BasicBlocks.BasicBlock();
-            var c1 = new BinaryOperation(s1, s2, BinaryOperation.BinaryOp.ADD, s3);
-            var c2 = new Receive(s3, ai1);
-            var c3 = new Receive(s3, ai1);
+            //BasicBlocks.BasicBlock succ = new BasicBlocks.BasicBlock();
+            //var c1 = new BinaryOperation(s1, s2, BinaryOperation.BinaryOp.ADD, s3);
+            //var c2 = new Receive(s3, ai1);
+            //var c3 = new Receive(s3, ai1);
 
 
-            succ.Code.Add(c1);
-            succ.Code.Add(c2);
-            succ.Code.Add(c3);
-            Console.WriteLine("" + succ.Description);
+            //succ.Code.Add(c1);
+           // succ.Code.Add(c2);
+            //succ.Code.Add(c3);
+           // Console.WriteLine("" + succ.Description);
             Console.Read();
 
         }

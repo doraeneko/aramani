@@ -9,22 +9,30 @@ namespace Aramani.ILTransformer
 {
     public class VariableFactory
     {
-        Stack<StackVariable> variableStack;
+
         List<StackVariable> variablePool;
         Dictionary<int, ParameterVariable> parameters;
         Dictionary<int, LocalVariable> locals;
-        Queue<StackVariable> stackvariablePool;
+        StackVariable[] variableStack;
 
         int variableCounter = 0;
+        int maxStackValue;
 
-        public VariableFactory()
+        public VariableFactory(int maxStackSize)
         {
             variablePool = new List<StackVariable>();
-            variableStack = new Stack<StackVariable>();
+
+
             locals = new Dictionary<int, LocalVariable>();
             parameters = new Dictionary<int, ParameterVariable>();
-            stackvariablePool = new Queue<StackVariable>();
-            variableCounter = 0;
+
+            variableStack = new StackVariable[maxStackSize];
+            for (int i = 0; i < maxStackSize; ++i)
+            {
+                variableStack[i] = new StackVariable();
+                variableStack[i].ID = i;
+            }
+            variableCounter = -1;
         }
 
 
@@ -60,49 +68,32 @@ namespace Aramani.ILTransformer
             }
         }
 
+        public void SetStackPointer(int position)
+        {
+            variableCounter = position-1;
+        }
 
         public StackVariable PushFreshVariable()
         {
-            StackVariable variable;
-#if STACK_REUSE
-            if (stackvariablePool.Any())
-            {
-                variable = stackvariablePool.Dequeue();
-            }
-            else
-            {
-#endif
-                variable = new StackVariable();
-                variable.ID = variableCounter;
-                variableCounter++;
-                variablePool.Add(variable);
-#if STACK_REUSE
-        }
-#endif
-            variableStack.Push(variable);
-            return variable;
+            variableCounter++;
+            return variableStack[variableCounter];
+
         }
 
         public StackVariable PopVariable()
         {
-            if (!variableStack.Any())
-            {
-                Console.WriteLine("ERROR: Nothing on the stack!");
-                return null;
-            }
-            var result = variableStack.Pop();
-            stackvariablePool.Enqueue(result);
-            return result;
+            variableCounter--;
+            return variableStack[variableCounter+1];
         }
 
         public StackVariable TopVariable()
         {
-            if (!variableStack.Any())
-            {
-                Console.WriteLine("ERROR: Nothing on the stack!");
-                return null;
-            }
-            return variableStack.Peek();
+            return variableStack[variableCounter];
+        }
+
+        public int GetCurrentStackValue()
+        {
+            return variableCounter;
         }
 
     }
