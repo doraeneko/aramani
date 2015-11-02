@@ -5,45 +5,75 @@ using System.Text;
 using System.Threading.Tasks;
 using Aramani.IR.Commands;
 using Mono.Cecil.Cil;
+using Aramani.IR.BasicBlocks;
 
 namespace Aramani.ILTransformer
 {
 
     public class BasicBlocks
     {
-        List<Instruction> jumpTargetsIL;
-        List<Command> jumpTargetsIR;
-        Dictionary<Branch, Instruction> commandTojumpTargets;
-        Dictionary<Instruction, BasicBlocks> instructionToBasicBlocks;
-     
+        public Dictionary<Instruction, bool> JumpTargetsIL;
+        public List<Command> JumpTargetsIR;
+        public List<Aramani.IR.BasicBlocks.BasicBlock> Blocks;
+
+        Dictionary<Branch, Instruction> CommandTojumpTargets;
+        Dictionary<Instruction, BasicBlocks> InstructionToBasicBlocks;
+        Dictionary<Command, Aramani.IR.BasicBlocks.BasicBlock> CommandsToBasicBlocks;
+        int blockCounter = 0;
 
         public BasicBlocks()
         {
-            jumpTargetsIL = new List<Instruction>();
-            jumpTargetsIR = new List<Command>();
-            commandTojumpTargets = new Dictionary<Branch, Instruction>();
-            instructionToBasicBlocks = new Dictionary<Instruction, BasicBlocks>();
+            JumpTargetsIL = new Dictionary<Instruction, bool>();
+            JumpTargetsIR = new List<Command>();
+            CommandTojumpTargets = new Dictionary<Branch, Instruction>();
+            InstructionToBasicBlocks = new Dictionary<Instruction, BasicBlocks>();
+            Blocks = new List<IR.BasicBlocks.BasicBlock>();
+            CommandsToBasicBlocks = new Dictionary<Command, IR.BasicBlocks.BasicBlock>();
+        }
+
+        public IR.BasicBlocks.BasicBlock CurrentBasicBlock { get; set; }
+
+        public void PushNewBasicBlock()
+        {
+            if (CurrentBasicBlock != null 
+                && CurrentBasicBlock.Code.Count == 0)
+            {
+                return;
+            }
+            if (CurrentBasicBlock != null)
+            {
+                Blocks.Add(CurrentBasicBlock);
+            }
+            CurrentBasicBlock = new IR.BasicBlocks.BasicBlock(blockCounter++);
         }
 
         public void AddBasicBlockEntry(Instruction instruction)
         {
-            jumpTargetsIL.Add(instruction);
+            JumpTargetsIL.Add(instruction, true);
+        }
+
+        public bool IsJumpTarget(Instruction instruction)
+        {
+            return JumpTargetsIL.ContainsKey(instruction);
         }
 
         public void AddJumpTarget(Branch jumpCmd, Instruction target)
         {
-            jumpTargetsIL.Add(target);
-            commandTojumpTargets.Add(jumpCmd, target);
+            JumpTargetsIL.Add(target, true);
+            CommandTojumpTargets.Add(jumpCmd, target);
         }
 
-        public void ComputeBasicBlocks(ILLocationsToIR transformer)
+        public BasicBlock GetBlock(Command command)
         {
-            foreach (var entry in commandTojumpTargets)
-            {
-                Console.WriteLine("SET: " + entry.Value + ", " + transformer.Get(entry.Value));
-                entry.Key.Target = transformer.Get(entry.Value);
-            }
+            BasicBlock result = null;
+            CommandsToBasicBlocks.TryGetValue(command, out result);
+            return result;
+        }
 
+        public void AddCommandToCurrentBasicBlock(Command command, Mono.Cecil.Cil.Instruction lastInstruction)
+        {
+            CommandsToBasicBlocks.Add(command, CurrentBasicBlock);
+            CurrentBasicBlock.Code.Add(command);
         }
     }
 }

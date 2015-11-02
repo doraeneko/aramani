@@ -10,7 +10,7 @@ namespace Aramani.IR.Commands
 
     public abstract class Branch : Command
     {
-        public Command Target { get; set; }
+        public Aramani.IR.BasicBlocks.BasicBlock Target { get; set; }
     }
 
     public class BranchConditional : Branch
@@ -27,7 +27,7 @@ namespace Aramani.IR.Commands
         {
             get
             {
-                var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
+                var target = (Target == null) ? "not set" : ("" + Target.ID);
                 return
                     "if " + Condition.Description 
                     + " then goto " + target;
@@ -47,7 +47,7 @@ namespace Aramani.IR.Commands
         {
             get
             {
-                var target = (Target == null) ? "not set" : ("" + Target.GetHashCode());
+                var target = (Target == null) ? "not set" : ("" + Target.ID);
                 return
                     "goto " + target;
             }
