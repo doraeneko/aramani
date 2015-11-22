@@ -18,12 +18,13 @@ namespace Aramani.ILTransformer
         private Dictionary<Mono.Cecil.Cil.Instruction, int> stackHeights;
    
 
+
         private Command LoadArg(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
             var target = new VariableLocation(variables.GetParameter(index));
             var command = new Receive(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -34,7 +35,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PushFreshVariable();
             var target = new AddressOfLocation(new VariableLocation(variables.GetParameter(index)));
             var command = new Receive(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -45,7 +46,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PopVariable();
             var target = new VariableLocation(variables.GetLocalVariable(index));
             var command = new Set(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -56,7 +57,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PushFreshVariable();
             var target = new VariableLocation(variables.GetLocalVariable(index));
             var command = new Receive(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -67,7 +68,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PushFreshVariable();
             var target = new AddressOfLocation(new VariableLocation(variables.GetLocalVariable(index)));
             var command = new Receive(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -78,7 +79,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PushFreshVariable();
             var constantLocation = new ConstantLocation<T>(constant);
             var command = new Receive(stackVar, constantLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -89,7 +90,7 @@ namespace Aramani.ILTransformer
             var stackVar = variables.PopVariable();
             var target = new VariableLocation(variables.GetParameter(index));
             var command = new Set(stackVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -101,7 +102,7 @@ namespace Aramani.ILTransformer
             var stackVar2 = variables.PushFreshVariable();
             var target = new VariableLocation(stackVar2);
             var command = new Set(stackVar1, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -116,7 +117,7 @@ namespace Aramani.ILTransformer
                 throw new Exception("No target given for branch instruction.");
             }
             // basicBlocks.AddJumpTarget(command, target);   
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -142,7 +143,7 @@ namespace Aramani.ILTransformer
             var command2 = new BranchConditional(resultVar);
             // basicBlocks.AddJumpTarget(command2, target);
             commandList.Add(command2);
-            ILToIr.Add(instruction, command2);
+            ILToIr.AddCommand(instruction, command2);
             basicBlocks.AddCommandToCurrentBasicBlock(command2, instruction); // TODO: not elegant...
             return command1;
         }
@@ -153,7 +154,7 @@ namespace Aramani.ILTransformer
             var stackVar2 = variables.PopVariable();
             var resultVar = variables.PushFreshVariable();
             var command1 = new BinaryOperation(resultVar, stackVar1, binaryOp, stackVar2);
-            ILToIr.Add(instruction, command1);
+            ILToIr.AddCommand(instruction, command1);
             commandList.Add(command1);
             basicBlocks.AddCommandToCurrentBasicBlock(command1, instruction);
             return command1;
@@ -177,7 +178,7 @@ namespace Aramani.ILTransformer
             var command2 = new BranchConditional(resultVar);
             // basicBlocks.AddJumpTarget(command2, target);
             commandList.Add(command2);
-            ILToIr.Add(instruction, command2);
+            ILToIr.AddCommand(instruction, command2);
             basicBlocks.AddCommandToCurrentBasicBlock(command2, instruction);
             return command1;
         }
@@ -199,7 +200,7 @@ namespace Aramani.ILTransformer
                 var groundType = new Aramani.IR.Types.GroundType(operandAsType);
                 command1 = new TypedUnaryOperation(resultVar, unaryOp, stackVar1, groundType);
             }
-            ILToIr.Add(instruction, command1);
+            ILToIr.AddCommand(instruction, command1);
             commandList.Add(command1);
             basicBlocks.AddCommandToCurrentBasicBlock(command1, instruction);
             return command1;
@@ -211,7 +212,7 @@ namespace Aramani.ILTransformer
             var stackVar2 = variables.PushFreshVariable();
             var target = new DerefLocation(new VariableLocation(stackVar1));
             var command = new Receive(stackVar2, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -223,7 +224,7 @@ namespace Aramani.ILTransformer
             var addressVar = variables.PopVariable();
             var target = new DerefLocation(new VariableLocation(addressVar));
             var command = new Set(valueVar, target);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -232,7 +233,7 @@ namespace Aramani.ILTransformer
         private Command Return(Mono.Cecil.Cil.Instruction instruction)
         {
             var command = new Return();
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -242,7 +243,7 @@ namespace Aramani.ILTransformer
         {
             variables.PopVariable();
             var command = new Nop();
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -251,7 +252,7 @@ namespace Aramani.ILTransformer
         private Command Nop(Mono.Cecil.Cil.Instruction instruction)
         {
             var command = new Nop();
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -264,7 +265,7 @@ namespace Aramani.ILTransformer
             var stackVar1 = variables.PopVariable();
             var stackVar2 = variables.PushFreshVariable();
             var command = new Aramani.IR.Commands.Convert(stackVar1, stackVar2, type, withOverflowCheck);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -278,7 +279,7 @@ namespace Aramani.ILTransformer
             var resultVar = variables.PushFreshVariable();
             var elementLocation = new ArrayElementLocation(arayRefVar, indexVar);
             var command = new Aramani.IR.Commands.Receive(resultVar, elementLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -292,7 +293,7 @@ namespace Aramani.ILTransformer
             var resultVar = variables.PushFreshVariable();
             var elementLocation = new AddressOfLocation(new ArrayElementLocation(arayRefVar, indexVar));
             var command = new Aramani.IR.Commands.Receive(resultVar, elementLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -306,7 +307,7 @@ namespace Aramani.ILTransformer
             var arayRefVar = variables.PopVariable();
             var elementLocation = new ArrayElementLocation(arayRefVar, indexVar);
             var command = new Aramani.IR.Commands.Set(valueVar, elementLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -340,7 +341,7 @@ namespace Aramani.ILTransformer
                 resultVar = variables.PushFreshVariable();
             }
             var command = new Aramani.IR.Commands.Call(new IR.Routines.Routine(methodDefinition), arguments, resultVar, isVirtual);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -367,7 +368,7 @@ namespace Aramani.ILTransformer
             Aramani.IR.Variables.StackVariable resultVar = null;
             resultVar = variables.PushFreshVariable();
             var command = new Aramani.IR.Commands.NewObject(new IR.Routines.Routine(methodDefinition), arguments, resultVar);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -383,7 +384,7 @@ namespace Aramani.ILTransformer
             if (loadAddress)
                 sourceLocation = new AddressOfLocation(sourceLocation);
             var command = new Receive(stackVar2, sourceLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -397,7 +398,7 @@ namespace Aramani.ILTransformer
             var fieldVar = new Aramani.IR.Variables.FieldVariable(fieldRef);
             Location targetLocation = new InstanceFieldLocation(objVar, fieldVar);
             var command = new Set(valueVar, targetLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -412,7 +413,7 @@ namespace Aramani.ILTransformer
             if (loadAddress)
                 sourceLocation = new AddressOfLocation(sourceLocation);
             var command = new Receive(stackVar, sourceLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -425,7 +426,7 @@ namespace Aramani.ILTransformer
             var fieldVar = new Aramani.IR.Variables.FieldVariable(fieldRef);
             Location targetLocation = new VariableLocation(fieldVar);
             var command = new Set(valueVar, targetLocation);
-            ILToIr.Add(instruction, command);
+            ILToIr.AddCommand(instruction, command);
             commandList.Add(command);
             basicBlocks.AddCommandToCurrentBasicBlock(command, instruction);
             return command;
@@ -937,9 +938,6 @@ namespace Aramani.ILTransformer
             // phase 3
             foreach (var basicBlock in basicBlocks.Blocks)
             {
-
-                //lastInstruction = basicBlock.Next
-
                 foreach (var command in basicBlock.Code)
                 {
                     var asBranch = command as Branch;

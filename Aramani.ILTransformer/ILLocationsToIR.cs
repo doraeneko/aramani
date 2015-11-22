@@ -12,18 +12,29 @@ namespace Aramani.ILTransformer
     public class ILLocationsToIR
     {
     
-        Dictionary<Mono.Cecil.Cil.Instruction, Aramani.IR.Commands.Command> cilToIR;
+        Dictionary<Mono.Cecil.Cil.Instruction, List<Command>> cilToIR;
         Dictionary<Aramani.IR.Commands.Command, Mono.Cecil.Cil.Instruction> IRtoCil;
 
         public ILLocationsToIR()
         {
-            cilToIR = new Dictionary<Instruction, Command>();
+            cilToIR = new Dictionary<Instruction, List<Command>>();
             IRtoCil = new Dictionary<Command, Instruction>();
         }
 
-        public void Add(Instruction instruction, Command command)
+        public void AddCommand(Instruction instruction, Command command)
         {
-            cilToIR.Add(instruction, command);
+            List<Command> commands;
+            if (!cilToIR.TryGetValue(instruction, out commands))
+            {
+                commands.Add(command);
+            }
+            else
+            {
+                commands = new List<Command>();
+                cilToIR.Add(instruction, commands);
+            }
+            commands.Add(command);
+
             IRtoCil.Add(command, instruction);
         }
 
@@ -34,9 +45,9 @@ namespace Aramani.ILTransformer
             return instruction;
         }
 
-        public Command Get(Instruction instruction)
+        public List<Command> Get(Instruction instruction)
         {
-            Command command = null;
+            List<Command> command = null;
             cilToIR.TryGetValue(instruction, out command);
             return command;
         }
