@@ -47,7 +47,7 @@ namespace Aramani.ILTransformer
             CurrentBasicBlock = new IR.BasicBlocks.BasicBlock(blockCounter++);
         }
 
-        public void AddBasicBlockEntry(Instruction instruction)
+        public void AddInstructionAsJumpTarget(Instruction instruction)
         {
             JumpTargetsIL.Add(instruction, true);
         }
@@ -55,12 +55,6 @@ namespace Aramani.ILTransformer
         public bool IsJumpTarget(Instruction instruction)
         {
             return JumpTargetsIL.ContainsKey(instruction);
-        }
-
-        public void AddJumpTarget(Branch jumpCmd, Instruction target)
-        {
-            JumpTargetsIL.Add(target, true);
-            CommandTojumpTargets.Add(jumpCmd, target);
         }
 
         public BasicBlock GetBlock(Command command)
@@ -75,5 +69,62 @@ namespace Aramani.ILTransformer
             CommandsToBasicBlocks.Add(command, CurrentBasicBlock);
             CurrentBasicBlock.Code.Add(command);
         }
+
+        public void RegisterBranchJumpTargets(ICollection<Instruction> instructions)
+        {
+            // Insert jump targets 
+            foreach (var instruction in instructions)
+            {
+                if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineSwitch)
+                {
+                    foreach (var target in (Mono.Cecil.Cil.Instruction[])instruction.Operand)
+                    {
+                        AddInstructionAsJumpTarget(target);
+                    }
+                }
+                else if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineBrTarget ||
+                    instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.ShortInlineBrTarget)
+                {
+                    AddInstructionAsJumpTarget(instruction.Operand as Mono.Cecil.Cil.Instruction);
+                }
+            }
+        }
+
+        public void BackpatchJumpTargets(ILLocationsToIR ILToIR)
+        {
+            // phase 3
+            foreach (var basicBlock in Blocks)
+            {
+                foreach (var command in basicBlock.Code)
+                {
+                    var asBranch = command as Branch;
+                    if (asBranch == null)
+                        continue;
+                    var instruction = ILToIR.Get(command);
+                    if (instruction == null)
+                        continue;
+
+                    if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineBrTarget ||
+                        instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.ShortInlineBrTarget)
+                    {
+                        var target = instruction.Operand as Mono.Cecil.Cil.Instruction;
+                        var targetCommand = ILToIR.Get(target);
+                        if (targetCommand != null)
+                        {
+                            asBranch.Target = GetBlock(targetCommand[0]);
+                        }
+                        else
+                        {
+                            Console.WriteLine("NO TARGET " + instruction.Operand);
+                        }
+                    }
+                    else if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineSwitch)
+                    {
+                        // TODO
+                    }
+                }
+            }
+        }
+
     }
 }

@@ -17,8 +17,6 @@ namespace Aramani.ILTransformer
         private BasicBlocks basicBlocks;
         private Dictionary<Mono.Cecil.Cil.Instruction, int> stackHeights;
    
-
-
         private Command LoadArg(Mono.Cecil.Cil.Instruction instruction, int index)
         {
             var stackVar = variables.PushFreshVariable();
@@ -159,7 +157,6 @@ namespace Aramani.ILTransformer
             basicBlocks.AddCommandToCurrentBasicBlock(command1, instruction);
             return command1;
         }
-
 
         private Command BranchUnary(Mono.Cecil.Cil.Instruction instruction, UnaryOperation.UnaryOp unaryOp)
         {
@@ -606,7 +603,6 @@ namespace Aramani.ILTransformer
                     command = LoadIndirect(instruction, null);
                     break;
 
-
                 case Mono.Cecil.Cil.Code.Brfalse_S:
                 case Mono.Cecil.Cil.Code.Brfalse:
                     command = BranchUnary(instruction, UnaryOperation.UnaryOp.NEG);
@@ -913,72 +909,18 @@ namespace Aramani.ILTransformer
                 Console.WriteLine("Warning: No method body in method {0}.", method);
                 return;
             }
+           
+            basicBlocks.RegisterBranchJumpTargets(method.Body.Instructions);
 
-            // phase 1
-            foreach (var instruction in method.Body.Instructions)
-            {
-                if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineSwitch)
-                {
-                    foreach (var target in (Mono.Cecil.Cil.Instruction[])instruction.Operand)
-                    {
-                        basicBlocks.AddBasicBlockEntry(target);
-                    }
-                }
-                else if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineBrTarget ||
-                    instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.ShortInlineBrTarget)
-                {
-                    basicBlocks.AddBasicBlockEntry(instruction.Operand as Mono.Cecil.Cil.Instruction);
-                }
-            }
-
-            // phase 2
             basicBlocks.PushNewBasicBlock();
-            ComputeCommands(method.Body.Instructions[0]);
 
-            // phase 3
-            foreach (var basicBlock in basicBlocks.Blocks)
-            {
-                foreach (var command in basicBlock.Code)
-                {
-                    var asBranch = command as Branch;
-                    if (asBranch == null)
-                        continue;
-                    var instruction = ILToIr.Get(command);
-                    if (instruction == null)
-                    {
-                        Console.WriteLine("%%%" + command + "," + instruction);
-                        continue;
-                    }
-                    if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineBrTarget ||
-                        instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.ShortInlineBrTarget)
-                    {
-                        var target = instruction.Operand as Mono.Cecil.Cil.Instruction;
-                        var targetCommand = ILToIr.Get(target);
-                        if (targetCommand != null)
-                        {
-                            asBranch.Target = basicBlocks.GetBlock(targetCommand);
-                        }
-                        else
-                        {
-                            Console.WriteLine("NO TARGET " + instruction.Operand);
-                        }
-                    }
-                    else if (instruction.OpCode.OperandType == Mono.Cecil.Cil.OperandType.InlineSwitch)
-                    {
-                        // TODO
-                    }
-                }
-            }
+            TransformInstructionsToCommands(method.Body.Instructions[0]);
 
-            // output 
-            foreach (var basicBlock in basicBlocks.Blocks)
-            {
-                Console.WriteLine(basicBlock.Description);
-            }
+            basicBlocks.BackpatchJumpTargets(ILToIr);
         }
 
 
-        private void ComputeCommands(Mono.Cecil.Cil.Instruction instruction, 
+        private void TransformInstructionsToCommands(Mono.Cecil.Cil.Instruction instruction, 
                                      int currentStackHeight = 0)
         {
             Console.WriteLine("PROCESSING: " + instruction);
@@ -1019,7 +961,6 @@ namespace Aramani.ILTransformer
 
                 var command = CreateCommand(instruction);
 
-
                 stackHeights.Add(instruction, currentStackHeight);
                 currentStackHeight += instruction.StackDelta;
 
@@ -1028,7 +969,7 @@ namespace Aramani.ILTransformer
                     basicBlocks.PushNewBasicBlock();
                     foreach (var target in (Mono.Cecil.Cil.Instruction[])instruction.Operand)
                     {
-                        ComputeCommands(target, currentStackHeight);
+                        TransformInstructionsToCommands(target, currentStackHeight);
                     }
                     // TODO: continuation? basic block connection.
                 }
@@ -1037,7 +978,7 @@ namespace Aramani.ILTransformer
                 {
                     previousBlock = basicBlocks.CurrentBasicBlock;
                     basicBlocks.PushNewBasicBlock();
-                    ComputeCommands(instruction.Operand as Mono.Cecil.Cil.Instruction, currentStackHeight);
+                    TransformInstructionsToCommands(instruction.Operand as Mono.Cecil.Cil.Instruction, currentStackHeight);
                 }
 
                 switch (instruction.OpCode.Code)
@@ -1062,10 +1003,10 @@ namespace Aramani.ILTransformer
                         var buffer = basicBlocks.CurrentBasicBlock;
                         basicBlocks.PushNewBasicBlock();
                         
-                        ComputeCommands(instruction.Next, currentStackHeight);
+                        TransformInstructionsToCommands(instruction.Next, currentStackHeight);
                         break;
                     default:
-                        ComputeCommands(instruction.Next, currentStackHeight);
+                        TransformInstructionsToCommands(instruction.Next, currentStackHeight);
                         break;
                 }
             }
